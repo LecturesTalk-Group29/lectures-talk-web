@@ -2,11 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+  }
+}
+
 html, body {
   height: 100%;
   margin: 0;
+  --page-width: 80rem;
 }
-
+.page-width {
+  max-width: var(--page-width);
+  margin: 0 auto;
+}
 
 body {
   display: flex;

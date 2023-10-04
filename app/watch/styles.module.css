@@ -1,0 +1,46 @@
+#main {
+    display: flex;
+    flex-direction: column;
+    max-height: 100vh;
+}
+#tabsContainer {
+    height: 3rem;
+}
+#tabs {
+    display: flex;
+    justify-content: space-evenly;
+}
+.tab {
+    flex-grow: 1;
+    text-align: center;
+    line-height: 3rem;
+}
+#player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    grid-gap: 2rem;
+}
+
+#contentContainer {
+    overflow: hidden;
+    flex-grow: 1;
+}
+.transcriptSegment {
+    margin: 1rem;
+}
+.highlightTranscriptSegment {
+    color: red;
+}
+#transcript {
+    overflow: auto;
+}
+@media screen and (min-width: 56rem) {
+    #player {
+        flex-direction: row;
+    }
+    #video {
+        width: 40%;
+    }
+}

@@ -5,43 +5,47 @@ import OpenAI, { toFile } from 'openai';
 import fs from 'node:fs';
 import { Buffer } from 'node:buffer';
 
-// Dummy data
-const posts = [
-  {
-    title: 'Lorem Ipsum',
-    slug: 'lorem-ipsum',
-    content:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero.',
-  },
-];
+import dbClient from '../../db';
+
+const video_coll = dbClient.db('lectures_talk').collection('videos');
 
 export async function GET(request: Request) {
-  // const { searchParams } = new URL(request.url);
-  // let url = searchParams.get('url');
-  // if (url == null) {
-  //   throw 'URL parameter missing'
-  // }
-  // url = atob(url);
-  // const buffer = Buffer.from(await (await fetch(url)).arrayBuffer())
-  // if (!buffer) {
-  //   throw 'Unable to fetch video';
-  // }
-  // const reader = new Readable();
-  // reader._read = function () { };
-  // reader.push(buffer);
-  // reader.push(null);
+  const { searchParams } = new URL(request.url);
+  let url = searchParams.get('url');
+  if (url === null) {
+    throw 'URL parameter missing'
+  }
 
-  // const command = ffmpeg(reader).format('mp3').pipe();
+  url = atob(url);
 
-  // const chunks: Buffer[] = []
+  // // TODO: Create index for videoUrl?
+  // const savedVideo = await video_coll.findOne({videoUrl: url});
+  const savedVideo = JSON.parse(fs.readFileSync('./test_document.json', 'utf-8'));
 
-  // command.on('data', function (chunk: Buffer) {
-  //   chunks.push(chunk)
-  // });
+  if(savedVideo) {
+    return NextResponse.json(savedVideo._id);
+  }
 
-  // await waitForEnd(command);
+  const buffer = Buffer.from(await (await fetch(url)).arrayBuffer())
+  if (!buffer) {
+    throw 'Unable to fetch video';
+  }
+  const reader = new Readable();
+  reader._read = function () { };
+  reader.push(buffer);
+  reader.push(null);
 
-  // // fs.writeFileSync('test.mp3', Buffer.concat(chunks))
+  const command = ffmpeg(reader).format('mp3').pipe();
+
+  const chunks: Buffer[] = []
+
+  command.on('data', function (chunk: Buffer) {
+    chunks.push(chunk)
+  });
+
+  await waitForEnd(command);
+
+  // fs.writeFileSync('test.mp3', Buffer.concat(chunks))
 
   // const api_transcription = await new OpenAI().audio.transcriptions.create({
   //   file: await toFile(Buffer.concat(chunks), 'unknown.mp3'),
@@ -49,17 +53,12 @@ export async function GET(request: Request) {
   //   response_format: 'verbose_json'
   // })
 
-  const api_transcription = JSON.parse(fs.readFileSync('./whisper_response_example.json', 'utf-8'))
+  const api_transcription = JSON.parse(fs.readFileSync('./whisper_response_example.json', 'utf-8'));
 
-  const transcription: {language: string, duration: number, segments: {id: number, start: number, end: number, text: string}[]} = {
-    language: api_transcription.language,
-    duration: api_transcription.language,
-    // text: api_transcription.text,
-    segments: []
-  }
+  const segments: {id: number, start: number, end: number, text: string}[] = [];
 
   for(const segment of api_transcription.segments) {
-    transcription.segments.push({
+    segments.push({
       id: segment.id,
       start: segment.start,
       end: segment.end,
@@ -67,9 +66,19 @@ export async function GET(request: Request) {
     })
   }
 
-  console.log(transcription);
+  const doc = {
+    videoUrl: url,
+    language: api_transcription.language,
+    duration: api_transcription.duration,
+    text: api_transcription.text,
+    segments: segments
+  }
 
-  return NextResponse.json(transcription);
+  const result = await video_coll.insertOne(doc);
+
+  // console.log(transcription);
+
+  return NextResponse.json(result.insertedId);
 }
 
 async function waitForEnd(command: Writable | internal.PassThrough) {
