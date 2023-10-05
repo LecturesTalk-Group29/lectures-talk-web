@@ -1,7 +1,8 @@
 #main {
     display: flex;
     flex-direction: column;
-    max-height: 100vh;
+    /* TODO: set header height */
+    height: calc(100vh - 56px);
 }
 #tabsContainer {
     height: 3rem;
@@ -11,16 +12,21 @@
     justify-content: space-evenly;
 }
 .tab {
+    box-sizing: border-box;
     flex-grow: 1;
     text-align: center;
     line-height: 3rem;
+    height: 3rem;
+    border-bottom: 1px solid var(--primary-bg)
+}
+#currentTab {
+    border-bottom: 1px solid var(--primary-color)
 }
 #player {
     display: flex;
     flex-direction: column;
     align-items: center;
     height: 100%;
-    grid-gap: 2rem;
 }
 
 #contentContainer {
@@ -28,19 +34,24 @@
     flex-grow: 1;
 }
 .transcriptSegment {
-    margin: 1rem;
+    margin: 2rem 0;
+    cursor: pointer;
 }
 .highlightTranscriptSegment {
-    color: red;
+    color: var(--highlight-color);
 }
 #transcript {
     overflow: auto;
+    align-self: auto;
+    padding: 0 1rem;
 }
-@media screen and (min-width: 56rem) {
+
+@media screen and (min-width: 64rem) {
     #player {
         flex-direction: row;
     }
     #video {
-        width: 40%;
+        flex: 0 0 40rem;
+        min-width: 0;
     }
 }

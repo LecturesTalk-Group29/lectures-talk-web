@@ -2,15 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color-scheme: dark;
-  }
+
+:root {
+  color-scheme: dark light;
+  --primary-bg: #000;
+  --primary-color: #aaa;
+  --highlight-color: #88f;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    color-scheme: light;
+    color-scheme: light dark;
+    --primary-bg: #fff;
+    --primary-color: #555;
+    --highlight-color: #007;
   }
 }
 
@@ -29,8 +34,8 @@ body {
   flex-direction: column;
   min-height: 100vh;
 
-  /* background: rgb(14, 13, 11);
-  color: white; */
+  background: var(--primary-bg);
+  color: var(--primary-color);
 }
 
 main {

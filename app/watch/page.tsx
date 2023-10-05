@@ -33,17 +33,17 @@ export default function Page() {
       </div>
       <div id={styles.tabsContainer}>
         <div id={styles.tabs} className='page-width'>
-          <Tab name={tabs[0]} setTab={setTab} />
-          <Tab name={tabs[1]} setTab={setTab} />
-          <Tab name={tabs[2]} setTab={setTab} />
+          <Tab name={tabs[0]} tab={tab} setTab={setTab} />
+          <Tab name={tabs[1]} tab={tab} setTab={setTab} />
+          <Tab name={tabs[2]} tab={tab} setTab={setTab} />
         </div>
       </div>
     </main>
   )
 }
 
-function Tab({name, setTab}: {name: string, setTab: Dispatch<SetStateAction<string>>}) {
-  return <button className={styles.tab} onClick={() => setTab(name)}>{name}</button>
+function Tab({name, tab, setTab}: {name: string, tab: string, setTab: Dispatch<SetStateAction<string>>}) {
+  return <button className={styles.tab} id={name === tab ? styles.currentTab : ''} onClick={() => setTab(name)}>{name}</button>
 }
 
 function Content({tab, videoData}: {tab: string, videoData: any}) {
@@ -83,11 +83,11 @@ function Player({tab, videoData}: {tab: string, videoData: any}) {
     video.currentTime = time
     setCurrentTime(time)
   }
+  // TODO: use summary segments
   return (
     <div id={styles.player}>
       <video ref={ref}src={videoData.videoUrl} id={styles.video} controls></video>
-      {tab === 'transcript' && <Transcript setCurrentTime={handleChangeTime} currentTime={currentTime} segments={videoData.segments}/>}
-      {tab === 'summary' && <Summary summary={videoData.summary}/>}
+      <Transcript setCurrentTime={handleChangeTime} currentTime={currentTime} segments={tab === 'transcript' ? videoData.segments : []}/>
     </div>
   )
 }
@@ -101,13 +101,7 @@ function Transcript({segments, currentTime, setCurrentTime}: {setCurrentTime: an
   )
 }
 
-function Summary({summary}: {summary: any}) {
-  return (
-    <div>
-      Summary
-    </div>
-  )
-}
+
 
 function TranscriptSegment({segment, currentTime, setCurrentTime}: {setCurrentTime: any, segment: any, currentTime: number}) {
   const ref = useRef(null)
@@ -117,7 +111,7 @@ function TranscriptSegment({segment, currentTime, setCurrentTime}: {setCurrentTi
       return
     }
     const div = ref.current as HTMLElement
-    if(currentTime > segment.start && currentTime < segment.end) {
+    if(currentTime >= segment.start && currentTime < segment.end) {
       setCurrent(true)
       div.scrollIntoView(false)
     } else {
