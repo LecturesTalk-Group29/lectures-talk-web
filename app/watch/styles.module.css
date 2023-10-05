@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: column;
     /* TODO: set header height */
-    height: calc(100vh - 56px);
+    height: calc(100vh - 68.5px);
 }
 #tabsContainer {
     height: 3rem;
@@ -17,10 +17,10 @@
     text-align: center;
     line-height: 3rem;
     height: 3rem;
-    border-bottom: 1px solid var(--primary-bg)
+    border-bottom: 4px solid var(--primary-bg)
 }
 #currentTab {
-    border-bottom: 1px solid var(--primary-color)
+    border-bottom-color: var(--primary-color)
 }
 #player {
     display: flex;
@@ -34,7 +34,7 @@
     flex-grow: 1;
 }
 .transcriptSegment {
-    margin: 2rem 0;
+    margin: 1rem 0;
     cursor: pointer;
 }
 .highlightTranscriptSegment {
@@ -44,6 +44,8 @@
     overflow: auto;
     align-self: auto;
     padding: 0 1rem;
+    height: inherit;
+    flex-grow: 1;
 }
 
 @media screen and (min-width: 64rem) {
