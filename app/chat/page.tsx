@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 'use client'
 
 import React from 'react';
@@ -132,3 +133,68 @@ const Chat = () => {
 }
 
 export default Chat;
+=======
+"use client"
+
+import React, { useState } from 'react';
+import SendIcon from '@mui/icons-material/Send';
+import Box from "@mui/material/Box";
+import { TextField, Button, Container } from '@mui/material';
+import HumanBubble from './HumanBubble';
+import AiBubble from './AiBubble';
+
+type MessageType = 'human' | 'ai';
+
+interface Message {
+    type: MessageType;
+    text: string;
+}
+
+const Chat: React.FC = () => {
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [inputValue, setInputValue] = useState<string>('');
+
+    const handleSend = () => {
+        if (inputValue.trim() !== '') {
+            setMessages([...messages, { type: 'human', text: inputValue }]);
+            setInputValue('');
+        }
+    };
+
+    return (
+        <main>
+            <Container>
+                <Box>
+                    {messages.map((message, index) => {
+                        if (message.type === 'human') {
+                            return <HumanBubble key={index} text={message.text} />;
+                        } else if (message.type === 'ai') {
+                            return <AiBubble key={index} text={message.text} />;
+                        }
+                        return null;
+                    })}
+                </Box>
+                <Box>
+                    <TextField 
+                        className='bg-white' 
+                        id="outlined-basic" 
+                        label="Lecture URL" 
+                        variant="outlined" 
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                    />
+                    <Button 
+                        className='bg-blue-700 text-white h-14 w-full md:w-auto' 
+                        variant="contained"
+                        onClick={handleSend}
+                    >
+                        <SendIcon/>
+                    </Button>
+                </Box>
+            </Container>
+        </main>
+    );
+}
+
+export default Chat;
+>>>>>>> Stashed changes

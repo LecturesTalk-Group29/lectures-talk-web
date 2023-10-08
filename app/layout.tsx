@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Footer from "./Footer";
 import Header from "./Header";
+import AuthProvider from './AuthProvider';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,6 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
+<<<<<<< Updated upstream
     <html lang="en">
       <body className={inter.className}>
         <Header />
@@ -24,5 +26,16 @@ export default function RootLayout({
         <Footer />
       </body>
     </html>
+=======
+    <AuthProvider>
+      <html lang="en">
+        <body className={inter.className}>
+          <Header />
+          {children}
+          {/* <Footer /> */}
+        </body>
+      </html>
+    </AuthProvider>
+>>>>>>> Stashed changes
   )
 }

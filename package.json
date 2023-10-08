@@ -22,6 +22,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "mongodb": "6.1",
     "next": "13.4.19",
+    "next-auth": "^4.23.2",
     "openai": "^4.10.0",
     "postcss": "8.4.30",
     "react": "18.2.0",
