@@ -3,11 +3,19 @@
 @tailwind utilities;
 
 
+/* TODO: Combine 3 theming systems into one MUI, TW, globals.css)*/
 :root {
   color-scheme: dark light;
-  --primary-bg: #000;
+  --primary-bg: #060109;
   --primary-color: #aaa;
   --highlight-color: #88f;
+
+  /* This is a format used by Realtimecolors.com*/
+  --text: #fffeff;
+  --background: #060109;
+  --primary: #8a1c8d;
+  --secondary: #270a38;
+  --accent: #9e33db;
 }
 
 @media (prefers-color-scheme: light) {

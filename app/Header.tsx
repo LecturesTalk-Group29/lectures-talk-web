@@ -70,10 +70,10 @@ function Header() {
     return (
         <AppBar
             position="static"
-            sx={{
-                backgroundColor: "white",
-                color: "black",
-            }}
+            // sx={{
+            //     backgroundColor: "black",
+            //     color: "white",
+            // }}
         >
             <Container maxWidth="lg">
                 <Toolbar disableGutters>
@@ -173,7 +173,8 @@ function Header() {
                             <Button
                                 key={page}
                                 onClick={handleCloseNavMenu}
-                                sx={{ my: 2, color: "black", display: "block" }}
+                                color="inherit"
+                                sx={{ my: 2, display: "block" }}
                             >
                                 {page}
                             </Button>
