@@ -18,15 +18,6 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-<<<<<<< Updated upstream
-    <html lang="en">
-      <body className={inter.className}>
-        <Header />
-        {children}
-        <Footer />
-      </body>
-    </html>
-=======
     <AuthProvider>
       <html lang="en">
         <body className={inter.className}>
@@ -36,6 +27,5 @@ export default function RootLayout({
         </body>
       </html>
     </AuthProvider>
->>>>>>> Stashed changes
   )
 }
