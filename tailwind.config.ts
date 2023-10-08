@@ -21,9 +21,27 @@ const config: Config = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      height: {
+        '7/10-screen': '70vh',
+        '4/5-screen': '80vh'
+      }
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }: { addUtilities: Function }) {
+      const newUtilities = {
+        '.scrollbar-hide': {
+          '-ms-overflow-style': 'none', // For IE and Edge
+          'scrollbar-width': 'none',   // For Firefox
+        },
+        '.scrollbar-hide::-webkit-scrollbar': {
+          display: 'none', // For Webkit-based browsers (Chrome, Safari, and Opera)
+        },
+      };
+
+      addUtilities(newUtilities, ['responsive', 'hover']);
+    }
+  ],
 }
 
 export default config

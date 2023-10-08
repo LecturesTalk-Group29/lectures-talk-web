@@ -1,1 +1,1 @@
-// TODO (Artem): Put chat code here
+// Chat will be here in the future, but for development it will be a separate page
