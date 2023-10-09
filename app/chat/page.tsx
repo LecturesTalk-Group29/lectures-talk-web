@@ -1,5 +1,11 @@
 "use client";
 
+type MessageType = 
+  | { type: 'human', text: string }
+  | { type: 'ai', text: string }
+  | { type: 'loading' };
+
+
 import Image from 'next/image'
 import Box from "@mui/material/Box";
 import { TextField, Button } from '@mui/material';
@@ -12,9 +18,10 @@ export default function Chat() {
 	const inputRef = useRef<HTMLInputElement>(null);
 	const chatboxRef = useRef<HTMLDivElement>(null);
 
-	const [messages, setMessages] = useState([
+	const [messages, setMessages] = useState<MessageType[]>([
 		{ type: 'human', text: "Hello, I am Human" },
-		{ type: 'ai', text: "Hello, I am AI" }
+		{ type: 'ai', text: "Hello, I am AI" },
+		{ type: 'loading' }
 	]);
 
 		useEffect(() => {
@@ -29,6 +36,7 @@ export default function Chat() {
 			if (inputRef.current) {
 				if (inputRef.current.value === '') return;
 	      setMessages([...messages, { type: 'human', text: inputRef.current.value }]);
+				inputRef.current.value = '';
 	    }
 		};
 
@@ -45,8 +53,10 @@ export default function Chat() {
 							{messages.map((message, index) => {
 								if (message.type === 'human') {
 									return <HumanBubble key={index} text={message.text} />;
-								} else {
+								} else if(message.type === 'ai') {
 									return <AiBubble key={index} text={message.text} />;
+								} else {
+									return <ThinkingAiBubble key={index} />;
 								}
 							})}
 						</div>
@@ -84,6 +94,41 @@ function AiBubble({ text }: { text: string }) {
 		<div className='flex flex-row justify-start'>
 			<div className='bg-secondary rounded-2xl p-2 m-2'>
 				{text}
+			</div>
+		</div>
+	)
+}
+
+function ThinkingAiBubble() {
+	const [dots, setDots] = useState("");
+
+		//Currently animated with JS not CSS
+    useEffect(() => {
+        const interval = setInterval(() => {
+						const maxDots = 7;
+
+            setDots((prevDots) => {
+                let dotsNum = prevDots.length;
+								dotsNum = (dotsNum % (maxDots - 1)) + 1;
+
+								let dots = '';
+								for (let i = 0; i < dotsNum; i++) {
+									dots += '|';
+								}
+								
+								return dots;
+            });
+        }, 200);
+
+        return () => clearInterval(interval);
+    }, []);
+
+	return (
+		<div className='flex flex-row justify-start'>
+			<div className='bg-secondary rounded-2xl p-2 m-2 w-12'>
+				<p className='w-full'>
+					{dots}
+				</p>
 			</div>
 		</div>
 	)
