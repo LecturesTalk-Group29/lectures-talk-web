@@ -4,22 +4,17 @@ type MessageType =
 	| { type: 'human', text: string }
 	| { type: 'ai', text: string }
 	| { type: 'loading' };
+type ServerRequest = {query: string};
+type ServerResponse = {content: string};
 
-type ServerRequest = {
-	query: string
-};
-type ServerResponse = {
-	content: string
-};
-
-import Image from 'next/image'
 import Box from "@mui/material/Box";
 import { TextField, Button } from '@mui/material';
 import Container from '@mui/material/Container';
 import SendIcon from '@mui/icons-material/Send';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, KeyboardEvent } from 'react';
 import axios from 'axios'; 
-
+import showdown from 'showdown';
+import { HumanBubble, AiBubble } from "./ChatBubbles";
 
 // TODO: Add mockup language UI support
 export default function Chat() {
@@ -29,6 +24,8 @@ export default function Chat() {
 
 	const inputRef = useRef<HTMLInputElement>(null);
 	const chatboxRef = useRef<HTMLDivElement>(null);
+
+	const converter = new showdown.Converter();
 
 	// TODO: 
 	// Save user's conversation with AI somehow. Maybe start with saving it to local storage,
@@ -44,18 +41,17 @@ export default function Chat() {
 			element.scrollTop = element.scrollHeight;
 		}
 	}, [messages]);
-
-
-	type ServerRequest = {
-		query: string;
-	};
 	
-	type ServerResponse = {
-		content: string;
-	};
-	
-	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault();
+	const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            handleSubmit();
+        }
+    }
+
+	const handleSubmit = async (e?: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLInputElement>) => {
+		if (e) {
+			e.preventDefault();
+		}
 		if (inputRef.current) {
 			//this pattern is used to remove TS18047 warning
 			const inputValue = inputRef.current.value;
@@ -103,9 +99,11 @@ export default function Chat() {
 						<div className='overflow-y-auto scrollbar-hide w-full bg-background h-7/10-screen p-1' ref={chatboxRef}>
 							{messages.map((message, index) => {
 								if (message.type === 'human') {
-									return <HumanBubble key={index} text={message.text} />;
+									const htmlText = converter.makeHtml(message.text);
+									return <HumanBubble key={index} text={htmlText} />;
 								} else if (message.type === 'ai') {
-									return <AiBubble key={index} text={message.text} />;
+									const htmlText = converter.makeHtml(message.text);
+									return <AiBubble key={index} text={htmlText} />;
 								} else {
 									return <ThinkingAiBubble key={index} />;
 								}
@@ -117,8 +115,8 @@ export default function Chat() {
 							<Box
 							>
 								<Box className="flex justify-between w-full pt-3">
-									<TextField className='w-10/12' id="outlined-basic" label="Type something" variant="outlined" inputRef={inputRef} />
-									<Button onClick={handleSubmit} className='mx-2' variant="outlined"><SendIcon /></Button>
+									<TextField className='w-10/12' onKeyDown={handleKeyDown} id="outlined-basic" color="secondary" label="Ask question" variant="outlined" inputRef={inputRef} />
+									<Button onClick={handleSubmit} className='mx-2' color="secondary" variant="outlined"><SendIcon /></Button>
 								</Box>
 							</Box>
 						</div>
@@ -129,26 +127,6 @@ export default function Chat() {
 	)
 }
 
-
-function HumanBubble({ text }: { text: string }) {
-	return (
-		<div className='flex flex-row justify-end'>
-			<div className='bg-primary rounded-2xl p-2 m-2'>
-				{text}
-			</div>
-		</div>
-	)
-}
-
-function AiBubble({ text }: { text: string }) {
-	return (
-		<div className='flex flex-row justify-start'>
-			<div className='bg-secondary rounded-2xl p-2 m-2'>
-				{text}
-			</div>
-		</div>
-	)
-}
 
 function ThinkingAiBubble() {
 	// Removing default "|" will change the autoscroll bechaviour
