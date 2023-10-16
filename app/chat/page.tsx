@@ -5,6 +5,12 @@ type MessageType =
 	| { type: 'ai', text: string }
 	| { type: 'loading' };
 
+type ServerRequest = {
+	query: string
+};
+type ServerResponse = {
+	content: string
+};
 
 import Image from 'next/image'
 import Box from "@mui/material/Box";
@@ -14,17 +20,24 @@ import SendIcon from '@mui/icons-material/Send';
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios'; 
 
+
+// TODO: Add mockup language UI support
 export default function Chat() {
+
+	const CURRENT_ENDPOINT: string = "/chatTestEcho";
+	// const CURRENT_ENDPOINT: string = "/queryGPT";
 
 	const inputRef = useRef<HTMLInputElement>(null);
 	const chatboxRef = useRef<HTMLDivElement>(null);
 
+	// TODO: 
+	// Save user's conversation with AI somehow. Maybe start with saving it to local storage,
+	// When user auth is implemented - save it to the database
 	const [messages, setMessages] = useState<MessageType[]>([
-		{ type: 'human', text: "Hello, I am Human" },
-		{ type: 'ai', text: "Hello, I am AI" },
-		{ type: 'loading' }
+		{ type: 'ai', text: "Hello, ask me any question about the lecture" },
 	]);
 
+	//Handles scrolling to the bottom of the chatbox when messages are added
 	useEffect(() => {
 		if (chatboxRef.current) {
 			const element = chatboxRef.current as HTMLDivElement;
@@ -33,53 +46,48 @@ export default function Chat() {
 	}, [messages]);
 
 
-	//
-	// const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-	// 	e.preventDefault();
-	// 	if (inputRef.current) {
-	// 		if (inputRef.current.value === '') return;
-	// 		setMessages([...messages, { type: 'human', text: inputRef.current.value }]);
-	// 		inputRef.current.value = '';
-
-	// 		//Send message to the server
-
-	// 	}
-	// };
-	//
+	type ServerRequest = {
+		query: string;
+	};
+	
+	type ServerResponse = {
+		content: string;
+	};
+	
 	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		if (inputRef.current) {
-		  if (inputRef.current.value === '') return;
-	  
-		  // Add user message to the messages array
-		  setMessages(prevMessages => [...prevMessages, { type: 'human', text: inputRef.current.value }]);
-		  inputRef.current.value = '';
-	  
-		  // Add loading message to the messages array
-		  setMessages(prevMessages => [...prevMessages, { type: 'loading' }]);
-	  
-		  try {
-			// Send message to the server
-			const response = await axios.post(process.env.NEXT_PUBLIC_API_URL + '/chatTestEcho', {
-			  query: inputRef.current.value
-			});
-	  
-			// Remove the loading message and add AI response to the messages array
-			setMessages(prevMessages => {
-			  // Filter out the loading message
-			  const updatedMessages = prevMessages.filter(message => message.type !== 'loading');
-			  // Add the AI response
-			  updatedMessages.push({ type: 'ai', text: response.data.response });
-			  return updatedMessages;
-			});
-	  
-		  } catch (error) {
-			console.error('Error:', error);
-			// Optionally remove the loading message if an error occurs
-			setMessages(prevMessages => prevMessages.filter(message => message.type !== 'loading'));
-		  }
+			//this pattern is used to remove TS18047 warning
+			const inputValue = inputRef.current.value;
+    		if (inputValue === '') return;
+			
+			// Add user and AI message to the messages array
+			setMessages(prevMessages => [...prevMessages, { type: 'human', text: inputValue }]);
+			setMessages(prevMessages => [...prevMessages, { type: 'loading' }]);
+			
+			try {
+				// Send message to the server
+				console.log("query: " + inputRef.current.value);
+				const request: ServerRequest = { query: inputRef.current.value };
+				inputRef.current.value = '';
+				const response = await axios.post<ServerResponse>(process.env.NEXT_PUBLIC_API_URL + CURRENT_ENDPOINT, request);
+
+				// Remove the loading message and add AI response to the messages array
+				setMessages(prevMessages => {
+					// Filter out the loading message
+					const updatedMessages = prevMessages.filter(message => message.type !== 'loading');
+					// Add the AI response
+					updatedMessages.push({ type: 'ai', text: response.data.content });
+					return updatedMessages;
+				});
+			
+			} catch (error) {
+				console.error('Error:', error);
+				// Optionally remove the loading message if an error occurs
+				setMessages(prevMessages => prevMessages.filter(message => message.type !== 'loading'));
+			}
 		}
-	  };
+	};
 
 
 
@@ -143,9 +151,10 @@ function AiBubble({ text }: { text: string }) {
 }
 
 function ThinkingAiBubble() {
-	const [dots, setDots] = useState("");
+	// Removing default "|" will change the autoscroll bechaviour
+	// Part of loading will be hidden behind the bottom inout field
+	const [dots, setDots] = useState("|");
 
-	//Currently animated with JS not CSS
 	useEffect(() => {
 		const interval = setInterval(() => {
 			const maxDots = 7;
