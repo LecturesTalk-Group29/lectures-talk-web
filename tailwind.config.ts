@@ -22,6 +22,7 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       height: {
+        '65/100-screen': '65vh',
         '7/10-screen': '70vh',
         '4/5-screen': '80vh'
       }

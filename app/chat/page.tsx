@@ -1,9 +1,9 @@
 "use client";
 
-type MessageType = 
-  | { type: 'human', text: string }
-  | { type: 'ai', text: string }
-  | { type: 'loading' };
+type MessageType =
+	| { type: 'human', text: string }
+	| { type: 'ai', text: string }
+	| { type: 'loading' };
 
 
 import Image from 'next/image'
@@ -12,6 +12,7 @@ import { TextField, Button } from '@mui/material';
 import Container from '@mui/material/Container';
 import SendIcon from '@mui/icons-material/Send';
 import { useState, useEffect, useRef } from 'react';
+import axios from 'axios'; 
 
 export default function Chat() {
 
@@ -24,21 +25,63 @@ export default function Chat() {
 		{ type: 'loading' }
 	]);
 
-		useEffect(() => {
-	    if (chatboxRef.current) {
-	        const element = chatboxRef.current as HTMLDivElement;
-	        element.scrollTop = element.scrollHeight;
-	    }
+	useEffect(() => {
+		if (chatboxRef.current) {
+			const element = chatboxRef.current as HTMLDivElement;
+			element.scrollTop = element.scrollHeight;
+		}
 	}, [messages]);
 
-		const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
-			e.preventDefault();
-			if (inputRef.current) {
-				if (inputRef.current.value === '') return;
-	      setMessages([...messages, { type: 'human', text: inputRef.current.value }]);
-				inputRef.current.value = '';
-	    }
-		};
+
+	//
+	// const handleSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+	// 	e.preventDefault();
+	// 	if (inputRef.current) {
+	// 		if (inputRef.current.value === '') return;
+	// 		setMessages([...messages, { type: 'human', text: inputRef.current.value }]);
+	// 		inputRef.current.value = '';
+
+	// 		//Send message to the server
+
+	// 	}
+	// };
+	//
+	const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		if (inputRef.current) {
+		  if (inputRef.current.value === '') return;
+	  
+		  // Add user message to the messages array
+		  setMessages(prevMessages => [...prevMessages, { type: 'human', text: inputRef.current.value }]);
+		  inputRef.current.value = '';
+	  
+		  // Add loading message to the messages array
+		  setMessages(prevMessages => [...prevMessages, { type: 'loading' }]);
+	  
+		  try {
+			// Send message to the server
+			const response = await axios.post(process.env.NEXT_PUBLIC_API_URL + '/chatTestEcho', {
+			  query: inputRef.current.value
+			});
+	  
+			// Remove the loading message and add AI response to the messages array
+			setMessages(prevMessages => {
+			  // Filter out the loading message
+			  const updatedMessages = prevMessages.filter(message => message.type !== 'loading');
+			  // Add the AI response
+			  updatedMessages.push({ type: 'ai', text: response.data.response });
+			  return updatedMessages;
+			});
+	  
+		  } catch (error) {
+			console.error('Error:', error);
+			// Optionally remove the loading message if an error occurs
+			setMessages(prevMessages => prevMessages.filter(message => message.type !== 'loading'));
+		  }
+		}
+	  };
+
+
 
 	return (
 		<main>
@@ -53,7 +96,7 @@ export default function Chat() {
 							{messages.map((message, index) => {
 								if (message.type === 'human') {
 									return <HumanBubble key={index} text={message.text} />;
-								} else if(message.type === 'ai') {
+								} else if (message.type === 'ai') {
 									return <AiBubble key={index} text={message.text} />;
 								} else {
 									return <ThinkingAiBubble key={index} />;
@@ -66,7 +109,7 @@ export default function Chat() {
 							<Box
 							>
 								<Box className="flex justify-between w-full pt-3">
-									<TextField className='w-10/12' id="outlined-basic" label="Type something" variant="outlined" inputRef={inputRef}/>
+									<TextField className='w-10/12' id="outlined-basic" label="Type something" variant="outlined" inputRef={inputRef} />
 									<Button onClick={handleSubmit} className='mx-2' variant="outlined"><SendIcon /></Button>
 								</Box>
 							</Box>
@@ -102,26 +145,26 @@ function AiBubble({ text }: { text: string }) {
 function ThinkingAiBubble() {
 	const [dots, setDots] = useState("");
 
-		//Currently animated with JS not CSS
-    useEffect(() => {
-        const interval = setInterval(() => {
-						const maxDots = 7;
+	//Currently animated with JS not CSS
+	useEffect(() => {
+		const interval = setInterval(() => {
+			const maxDots = 7;
 
-            setDots((prevDots) => {
-                let dotsNum = prevDots.length;
-								dotsNum = (dotsNum % (maxDots - 1)) + 1;
+			setDots((prevDots) => {
+				let dotsNum = prevDots.length;
+				dotsNum = (dotsNum % (maxDots - 1)) + 1;
 
-								let dots = '';
-								for (let i = 0; i < dotsNum; i++) {
-									dots += '|';
-								}
-								
-								return dots;
-            });
-        }, 200);
+				let dots = '';
+				for (let i = 0; i < dotsNum; i++) {
+					dots += '|';
+				}
 
-        return () => clearInterval(interval);
-    }, []);
+				return dots;
+			});
+		}, 200);
+
+		return () => clearInterval(interval);
+	}, []);
 
 	return (
 		<div className='flex flex-row justify-start'>
