@@ -4,13 +4,14 @@ import styles from './styles.module.css'
 import  { Dispatch, SetStateAction, useState, useEffect, useRef} from 'react' 
 
 import { useSearchParams } from 'next/navigation'
+import { VideoData, VideoSegment } from '../video'
 
 export default function Page() {
   const tabs = ['transcript', 'summary', 'chat']
   const [tab, setTab] = useState(tabs[0])
   const [id, setId] = useState(useSearchParams().get('id'))
 
-  const [videoData, setVideoData] = useState(null)
+  const [videoData, setVideoData] = useState<VideoData | null>(null)
   useEffect(() => {
     let ignore = false;
   
@@ -46,7 +47,7 @@ function Tab({name, tab, setTab}: {name: string, tab: string, setTab: Dispatch<S
   return <button className={styles.tab} id={name === tab ? styles.currentTab : ''} onClick={() => setTab(name)}>{name}</button>
 }
 
-function Content({tab, videoData}: {tab: string, videoData: any}) {
+function Content({tab, videoData}: {tab: string, videoData: VideoData}) {
   if(tab == 'transcript' || tab == 'summary') {
     return <Player tab={tab} videoData={videoData} />
   } else {
@@ -54,7 +55,7 @@ function Content({tab, videoData}: {tab: string, videoData: any}) {
   }
 }
 
-function Player({tab, videoData}: {tab: string, videoData: any}) {
+function Player({tab, videoData}: {tab: string, videoData: VideoData}) {
   const [currentTime, setCurrentTime] = useState(0)
   const ref = useRef(null)
   useEffect(() => {
@@ -92,8 +93,8 @@ function Player({tab, videoData}: {tab: string, videoData: any}) {
   )
 }
 
-function Transcript({segments, currentTime, setCurrentTime}: {setCurrentTime: any, currentTime: number, segments: any}) {
-  let items = segments.map((segment: any) => <TranscriptSegment key={segment.id} segment={segment} currentTime={currentTime} setCurrentTime={setCurrentTime}/>)
+function Transcript({segments, currentTime, setCurrentTime}: {setCurrentTime: (time: number) => void, currentTime: number, segments: VideoSegment[]}) {
+  let items = segments.map(segment => <TranscriptSegment key={segment.id} segment={segment} currentTime={currentTime} setCurrentTime={setCurrentTime}/>)
   return (
     <div id={styles.transcript}>
       {items}
@@ -101,9 +102,7 @@ function Transcript({segments, currentTime, setCurrentTime}: {setCurrentTime: an
   )
 }
 
-
-
-function TranscriptSegment({segment, currentTime, setCurrentTime}: {setCurrentTime: any, segment: any, currentTime: number}) {
+function TranscriptSegment({segment, currentTime, setCurrentTime}: {setCurrentTime: (time: number) => void, segment: VideoSegment, currentTime: number}) {
   const ref = useRef(null)
   const [current, setCurrent] = useState(false)
   useEffect(() => {

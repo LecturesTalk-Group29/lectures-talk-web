@@ -49,43 +49,27 @@ async function waitForEnd(command: Writable | internal.PassThrough) {
 
 async function start(url: string, id: ObjectId) {
   // console.log('download video...')
-
   // const body = (await fetch(url)).body
-
   // if (!body) {
+  //   // TODO: Update DB document
   //   throw 'Unable to fetch video';
   // }
-
   // const videoPath = `${id}.mp4`
-  
   // const videoStream = fs.createWriteStream(videoPath);
   // await finished(Readable.fromWeb(body as any).pipe(videoStream));
-
   // console.log('video download complete')
-
-  // // const reader = new Readable();
-  // // reader._read = function () { };
-  // // reader.push(buffer);
-  // // reader.push(null);
-
   // console.log('start conversion...')
-
   // const command = ffmpeg(videoPath).noVideo().audioFrequency(22050).audioBitrate('32k').audioChannels(1).format('mp3').pipe();
-
   // const chunks: Buffer[] = []
-
   // command.on('data', function (chunk: Buffer) {
   //   chunks.push(chunk)
   // });
-
   // command.on('error', function(err: any, stdout: any, stderr: any) {
   //   console.log(err.message);
   //   console.log("stdout:\n" + stdout);
   //   console.log("stderr:\n" + stderr);
   // })
-
   // await waitForEnd(command);
-
   // console.log('conversion complete')
 
   // fs.unlink(videoPath, function() {console.log('file deleted')})
