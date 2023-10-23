@@ -10,11 +10,11 @@ export default function Page() {
   const tabs = ['transcript', 'summary', 'chat']
   const [tab, setTab] = useState(tabs[0])
   const [id, setId] = useState(useSearchParams().get('id'))
-
+  const [currentTime, setCurrentTime] = useState(0)
   const [videoData, setVideoData] = useState<VideoData | null>(null)
-  useEffect(() => {
-    let ignore = false;
-  
+  const ref = useRef(null)
+
+  useEffect(() => {  
     async function startFetching() {
       const data = await (await fetch(`http://localhost:3000/api/lecture?id=${id}`)).json();
       setVideoData(data);
@@ -22,42 +22,7 @@ export default function Page() {
     startFetching();
     console.log(`Fething: ${id}`)
   }, [id]);
-
-  if(videoData == null) {
-    return null;
-  }
-
-  return (
-    <main id={styles.main}>
-      <div id={styles.contentContainer}>
-        <Content tab={tab} videoData={videoData} />
-      </div>
-      <div id={styles.tabsContainer}>
-        <div id={styles.tabs} className='page-width'>
-          <Tab name={tabs[0]} tab={tab} setTab={setTab} />
-          <Tab name={tabs[1]} tab={tab} setTab={setTab} />
-          <Tab name={tabs[2]} tab={tab} setTab={setTab} />
-        </div>
-      </div>
-    </main>
-  )
-}
-
-function Tab({name, tab, setTab}: {name: string, tab: string, setTab: Dispatch<SetStateAction<string>>}) {
-  return <button className={styles.tab} id={name === tab ? styles.currentTab : ''} onClick={() => setTab(name)}>{name}</button>
-}
-
-function Content({tab, videoData}: {tab: string, videoData: VideoData}) {
-  if(tab == 'transcript' || tab == 'summary') {
-    return <Player tab={tab} videoData={videoData} />
-  } else {
-    return null
-  }
-}
-
-function Player({tab, videoData}: {tab: string, videoData: VideoData}) {
-  const [currentTime, setCurrentTime] = useState(0)
-  const ref = useRef(null)
+  
   useEffect(() => {
     if(ref.current == null) {
       return
@@ -75,6 +40,7 @@ function Player({tab, videoData}: {tab: string, videoData: VideoData}) {
     console.log(`Adeded timeupdate listener`)
     return () => video.removeEventListener('timeupdate', listener)
   }, [videoData])
+
   let handleChangeTime = (time: number) => {
     console.log('setting time')
     if(ref.current === null) {
@@ -84,13 +50,34 @@ function Player({tab, videoData}: {tab: string, videoData: VideoData}) {
     video.currentTime = time
     setCurrentTime(time)
   }
-  // TODO: use summary segments
+
+  if(videoData == null) {
+    return null;
+  }
+
   return (
-    <div id={styles.player}>
-      <video ref={ref}src={videoData.videoUrl} id={styles.video} controls></video>
-      <Transcript setCurrentTime={handleChangeTime} currentTime={currentTime} segments={tab === 'transcript' ? videoData.segments : []}/>
-    </div>
+    <main id={styles.main} className='page-width'>
+      <div id={styles.contentContainer}>
+        <video ref={ref}src={videoData.videoUrl} id={styles.video} controls></video>
+        {tab === 'transcript' || tab === 'summary' ? 
+          <Transcript setCurrentTime={handleChangeTime} currentTime={currentTime} segments={tab === 'transcript' ? videoData.segments : []}/>
+          : <div>TODO</div>
+        }
+
+      </div>
+      <div id={styles.tabsContainer}>
+        <div id={styles.tabs} className='page-width'>
+          <Tab name={tabs[0]} tab={tab} setTab={setTab} />
+          <Tab name={tabs[1]} tab={tab} setTab={setTab} />
+          <Tab name={tabs[2]} tab={tab} setTab={setTab} />
+        </div>
+      </div>
+    </main>
   )
+}
+
+function Tab({name, tab, setTab}: {name: string, tab: string, setTab: Dispatch<SetStateAction<string>>}) {
+  return <button className={styles.tab} id={name === tab ? styles.currentTab : ''} onClick={() => setTab(name)}>{name}</button>
 }
 
 function Transcript({segments, currentTime, setCurrentTime}: {setCurrentTime: (time: number) => void, currentTime: number, segments: VideoSegment[]}) {

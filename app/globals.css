@@ -30,7 +30,7 @@
 html, body {
   height: 100%;
   margin: 0;
-  --page-width: 80rem;
+  --page-width: 96rem;
 }
 .page-width {
   max-width: var(--page-width);
