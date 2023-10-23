@@ -58,7 +58,7 @@ export default function Page() {
   return (
     <main id={styles.main} className='page-width'>
       <div id={styles.contentContainer}>
-        <video ref={ref}src={videoData.videoUrl} id={styles.video} controls></video>
+        <video ref={ref}src={videoData.url} id={styles.video} controls></video>
         {tab === 'transcript' || tab === 'summary' ? 
           <Transcript setCurrentTime={handleChangeTime} currentTime={currentTime} segments={tab === 'transcript' ? videoData.segments : []}/>
           : <div>TODO</div>

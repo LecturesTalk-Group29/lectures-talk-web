@@ -8,20 +8,29 @@ import { Buffer } from 'node:buffer';
 
 import dbClient from '../../db';
 import { ObjectId } from 'mongodb';
+import authenticate from '@/app/authenticate';
+import { VideoData } from '@/app/video';
 
-const video_coll = dbClient.db('lectures_talk').collection('videos');
+const videoColl = dbClient.db('lectures_talk').collection('videos');
+const userColl = dbClient.db('lectures_talk').collection('users');
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  let url = searchParams.get('url');
-  if (url === null) {
-    throw 'URL parameter missing'
+export async function POST(request: Request) {
+  const user = authenticate(request)
+
+  if(!user) {
+    return NextResponse.json({message: 'Invalid token or token missing'}, {status: 401})
   }
 
-  url = atob(url);
+  const video = await request.json()
+
+  console.log(video)
+
+  if(!video.url) {
+    return NextResponse.json({message: 'Missing video URL'}, {status: 400})
+  }
 
   // // TODO: Create index for videoUrl?
-  const savedVideo = await video_coll.findOne({videoUrl: url});
+  const savedVideo = await videoColl.findOne({url: video.url});
   // const savedVideo = JSON.parse(fs.readFileSync('./test_document.json', 'utf-8'));
 
   if(savedVideo) {
@@ -29,16 +38,18 @@ export async function GET(request: Request) {
   }
 
   const doc = {
-    videoUrl: url,
-    status: 'pending'
-  }
+    url: video.url,
+    uploaderUsername: user.username,
+    status: 'pending',
+    title: video.title
+  } as unknown as VideoData
 
-  const id = (await video_coll.insertOne(doc)).insertedId
+  doc._id = (await videoColl.insertOne(doc as any)).insertedId
   // const id = new ObjectId('651d8065b5733e28dce1cb66')
+  
+  start(doc)
 
-  start(url, id)
-
-  return NextResponse.json(id);
+  return NextResponse.json(doc._id);
 }
 
 async function waitForEnd(command: Writable | internal.PassThrough) {
@@ -47,9 +58,9 @@ async function waitForEnd(command: Writable | internal.PassThrough) {
   })
 }
 
-async function start(url: string, id: ObjectId) {
+async function start(video: VideoData) {
   // console.log('download video...')
-  // const body = (await fetch(url)).body
+  // const body = (await fetch(video.url)).body
   // if (!body) {
   //   // TODO: Update DB document
   //   throw 'Unable to fetch video';
@@ -100,16 +111,13 @@ async function start(url: string, id: ObjectId) {
     })
   }
 
-  const doc = {
-    videoUrl: url,
-    language: api_transcription.language,
-    duration: api_transcription.duration,
-    text: api_transcription.text,
-    segments: segments,
-    status: 'complete'
-  }
+  video.language = api_transcription.language
+  video.duration = api_transcription.duration
+  video.text = api_transcription.text
+  video.segments = segments
+  video.status = 'complete'
 
-  const result = await video_coll.replaceOne({_id: id}, doc);
+  const result = await videoColl.replaceOne({_id: video._id}, video);
 }
 // https://ia801801.us.archive.org/32/items/twitter-1055445425405263875/1055445425405263875.mp4
 // aHR0cHM6Ly9pYTgwMTgwMS51cy5hcmNoaXZlLm9yZy8zMi9pdGVtcy90d2l0dGVyLTEwNTU0NDU0MjU0MDUyNjM4NzUvMTA1NTQ0NTQyNTQwNTI2Mzg3NS5tcDQ=
