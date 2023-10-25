@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-import dbClient from '../../db';
+import dbClient from '../db';
 import { NextResponse } from 'next/server';
 
 const userColl = dbClient.db('lectures_talk').collection('users');
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     try {
         const savedUser = await userColl.insertOne(user)
-        return NextResponse.json({message: 'User created'}, {status: 201});
+        return NextResponse.json({message: 'User registered successfully'}, {status: 201});
     } catch (error) {
         return NextResponse.json(error, {status: 500});
     }

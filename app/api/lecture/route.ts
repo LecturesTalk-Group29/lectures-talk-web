@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-import dbClient from '../../db';
+import dbClient from '../db';
 import { ObjectId } from 'mongodb';
 
 const video_coll = dbClient.db('lectures_talk').collection('videos');

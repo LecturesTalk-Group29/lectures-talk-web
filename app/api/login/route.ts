@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 import jwt from 'jsonwebtoken'
 
-import dbClient from '../../db';
+import dbClient from '../db';
 import { NextResponse } from 'next/server';
 import User from '@/app/user';
 
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     if (!user.email || !user.password) {
         return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
     }
-    const savedUser = await userColl.findOne({ email: user.email, username: user.username })
+    const savedUser = await userColl.findOne({ email: user.email })
 
     if (!savedUser) {
         return NextResponse.json({ message: 'User not found' }, { status: 401 });
@@ -26,8 +26,15 @@ export async function POST(request: Request) {
         return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    const token = jwt.sign({ sub: savedUser._id, username: user.username, email: user.email }, process.env.ACCESS_TOKEN_SECRET_KEY!!, { expiresIn: '15m' });
-    const refreshToken = jwt.sign({ sub: savedUser._id }, process.env.REFRESH_TOKEN_SECRET_KEY!!, { expiresIn: '7d' });
+    const token = jwt.sign(
+        { sub: savedUser._id, username: savedUser.username, email: savedUser.email },
+        process.env.ACCESS_TOKEN_SECRET_KEY!!,
+        { expiresIn: '15m' }
+    )
+    const refreshToken = jwt.sign(
+        { sub: savedUser._id }, process.env.REFRESH_TOKEN_SECRET_KEY!!,
+        { expiresIn: '7d' }
+    );
 
     return NextResponse.json({ token, refreshToken })
 }

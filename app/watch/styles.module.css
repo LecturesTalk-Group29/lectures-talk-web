@@ -46,8 +46,25 @@
     padding: 0 1rem;
     height: inherit;
     flex-grow: 1;
+    position: relative;
 }
+/* #manualScrollContainer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+} */
+#manualScroll {
+    position: sticky;
+    bottom: 1rem;
+    right: 1rem;
+    background-color: var(--primary);
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+    width: fit-content;
 
+}
 @media screen and (min-width: 64rem) {
     #contentContainer {
         flex-direction: row;

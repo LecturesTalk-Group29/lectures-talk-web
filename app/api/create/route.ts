@@ -6,9 +6,9 @@ import OpenAI, { toFile } from 'openai';
 import fs from 'node:fs';
 import { Buffer } from 'node:buffer';
 
-import dbClient from '../../db';
+import dbClient from '../db';
 import { ObjectId } from 'mongodb';
-import authenticate from '@/app/authenticate';
+import { authenticate } from '../auth-service';
 import { VideoData } from '@/app/video';
 
 const videoColl = dbClient.db('lectures_talk').collection('videos');
