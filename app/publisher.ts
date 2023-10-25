@@ -1,16 +1,16 @@
-export class PubSub {
-    value: any;
-    constructor(value: any) {
+export class Publisher<T> {
+    value: T;
+    constructor(value: T) {
         this.value = value
     }
-    _subscribers: ((value: any) => void)[] = []
+    _subscribers: ((value: T) => void)[] = []
 
-    subscribe(callback: (value: any) => void) {
+    subscribe(callback: (value: T) => void) {
         this._subscribers.push(callback)
         callback(this.value)
     }
 
-    set(value: any) {
+    set(value: T) {
         this.value = value
         for(const callback of this._subscribers) {
             callback(this.value)

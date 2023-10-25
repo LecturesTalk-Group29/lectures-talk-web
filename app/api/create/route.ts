@@ -9,10 +9,9 @@ import { Buffer } from 'node:buffer';
 import dbClient from '../db';
 import { ObjectId } from 'mongodb';
 import { authenticate } from '../auth-service';
-import { VideoData } from '@/app/video';
+import { LectureData } from '@/app/lecture';
 
 const videoColl = dbClient.db('lectures_talk').collection('videos');
-const userColl = dbClient.db('lectures_talk').collection('users');
 
 export async function POST(request: Request) {
   const user = authenticate(request)
@@ -39,10 +38,10 @@ export async function POST(request: Request) {
 
   const doc = {
     url: video.url,
-    uploaderUsername: user.username,
+    submitter: user.username,
     status: 'pending',
     title: video.title
-  } as unknown as VideoData
+  } as unknown as LectureData
 
   doc._id = (await videoColl.insertOne(doc as any)).insertedId
   // const id = new ObjectId('651d8065b5733e28dce1cb66')
@@ -58,7 +57,7 @@ async function waitForEnd(command: Writable | internal.PassThrough) {
   })
 }
 
-async function start(video: VideoData) {
+async function start(video: LectureData) {
   // console.log('download video...')
   // const body = (await fetch(video.url)).body
   // if (!body) {

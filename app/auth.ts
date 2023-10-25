@@ -1,8 +1,14 @@
+'use client'
+
 import { redirect } from "next/navigation"
 import apiClient from "./api_client"
-import { PubSub } from "./pubsub"
+import { Publisher } from "./publisher"
 
-export const tokenPublisher = new PubSub(localStorage.getItem('token'))
+export const tokenPublisher = new Publisher<string | null>(null)
+
+if(typeof window !== 'undefined') {
+    tokenPublisher.set(localStorage.getItem('token'))
+}
 
 export async function register(username: string, email: string, password: string) {
     try {

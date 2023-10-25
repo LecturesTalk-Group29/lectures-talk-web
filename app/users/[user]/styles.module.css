@@ -1,0 +1,9 @@
+.resetFont {
+    font-size: revert;
+    margin: revert;
+}
+
+.lecture {
+    display: block;
+    margin: 1rem 0rem;
+}

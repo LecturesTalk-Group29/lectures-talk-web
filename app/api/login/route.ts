@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 
 import dbClient from '../db';
 import { NextResponse } from 'next/server';
-import User from '@/app/user';
+import User from '../user';
 
 const userColl = dbClient.db('lectures_talk').collection('users');
 

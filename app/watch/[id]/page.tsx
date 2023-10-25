@@ -4,24 +4,22 @@ import styles from './styles.module.css'
 import { Dispatch, SetStateAction, useState, useEffect, useRef } from 'react'
 
 import { useSearchParams } from 'next/navigation'
-import { VideoData, VideoSegment } from '../video'
-import apiClient from '../api_client'
-import { PubSub } from '../pubsub'
+import { LectureData, LectureSegment } from '../../lecture'
 
-export default function Page() {
+export default function Page({ params }: { params: { id: string } }) {
   const tabs = ['transcript', 'summary', 'chat']
   const [tab, setTab] = useState(tabs[0])
-  const [id, setId] = useState(useSearchParams().get('id'))
+  const [id, setId] = useState(params.id)
   const [currentTime, setCurrentTime] = useState(0)
-  const [videoData, setVideoData] = useState<VideoData | null>(null)
+  const [videoData, setVideoData] = useState<LectureData | null>(null)
   const ref = useRef(null)
 
   useEffect(() => {
-    async function startFetching() {
-      const data = await (await fetch(`/api/lecture?id=${id}`)).json();
+    async function fetchLecture() {
+      const data = await (await fetch(`/api/lectures/${id}`)).json();
       setVideoData(data);
     }
-    startFetching();
+    fetchLecture();
     console.log(`Fething: ${id}`)
   }, [id]);
 
@@ -58,7 +56,7 @@ export default function Page() {
   }
 
   return (
-    <main id={styles.main} className='page-width'>
+    <main id={styles.main} className='page-width-no-padding'>
       <div id={styles.contentContainer}>
         <video ref={ref} src={videoData.url} id={styles.video} controls></video>
         {tab === 'transcript' || tab === 'summary' ?
@@ -70,7 +68,7 @@ export default function Page() {
 
       </div>
       <div id={styles.tabsContainer}>
-        <div id={styles.tabs} className='page-width'>
+        <div id={styles.tabs}>
           {tabs.map((thisTab, index) => <Tab key={index} name={thisTab} tab={tab} setTab={setTab} />)}
         </div>
       </div>
@@ -82,7 +80,7 @@ function Tab({ name, tab, setTab }: { name: string, tab: string, setTab: Dispatc
   return <button className={styles.tab} id={name === tab ? styles.currentTab : ''} onClick={() => setTab(name)}>{name}</button>
 }
 
-function Transcript({ segments, currentTime, setCurrentTime }: { setCurrentTime: (time: number) => void, currentTime: number, segments: VideoSegment[] }) {
+function Transcript({ segments, currentTime, setCurrentTime }: { setCurrentTime: (time: number) => void, currentTime: number, segments: LectureSegment[] }) {
   const ref = useRef(null)
   let isAutoScrolling = useRef(false)
   let isManualScrolling = useRef(false)
@@ -112,7 +110,7 @@ function Transcript({ segments, currentTime, setCurrentTime }: { setCurrentTime:
     setCurrentSegement(segment)
     if (!isManualScrolling.current) {
       isAutoScrolling.current = true
-      segment.scrollIntoView(false)
+      segment.scrollIntoView({block: "center"})
     }
   }
 
@@ -145,7 +143,7 @@ function Transcript({ segments, currentTime, setCurrentTime }: { setCurrentTime:
 
 function TranscriptSegment(
   { segment, currentTime, setCurrentTime, setCurrentSegement }:
-    { setCurrentTime: (time: number) => void, segment: VideoSegment, currentTime: number, setCurrentSegement: (segment: HTMLElement) => void }
+    { setCurrentTime: (time: number) => void, segment: LectureSegment, currentTime: number, setCurrentSegement: (segment: HTMLElement) => void }
 ) {
   const ref = useRef(null)
   const [current, setCurrent] = useState(false)
@@ -154,7 +152,7 @@ function TranscriptSegment(
       return
     }
     const div = ref.current as HTMLElement
-    if (currentTime >= segment.start && currentTime < segment.end) {
+    if (currentTime + 0.1 >= segment.start && currentTime + 0.1 < segment.end) {
       setCurrent(true)
       setCurrentSegement(div)
     } else {

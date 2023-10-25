@@ -1,20 +1,20 @@
 import { ObjectId } from "mongodb";
 
-export interface VideoSegment {
+export interface LectureSegment {
     id: number
     start: number
     end: number
     text: string
 }
 
-export interface VideoData {
+export interface LectureData {
     _id: ObjectId
     url: string
     language: string
     duration: number
     text: string
-    segments: VideoSegment[]
+    segments: LectureSegment[]
     title: string
-    uploaderUsername: string
+    submitter: string
     status: string
 }
