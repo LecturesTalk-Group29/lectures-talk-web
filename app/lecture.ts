@@ -14,6 +14,7 @@ export interface LectureData {
     duration: number
     text: string
     segments: LectureSegment[]
+    summarySegments: LectureSegment[]
     title: string
     submitter: string
     status: string

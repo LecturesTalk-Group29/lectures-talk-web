@@ -61,7 +61,7 @@ export default function Page({ params }: { params: { id: string } }) {
         <video ref={ref} src={videoData.url} id={styles.video} controls></video>
         {tab === 'transcript' || tab === 'summary' ?
           // TODO: summary segments
-          <Transcript setCurrentTime={handleChangeTime} currentTime={currentTime} segments={tab === 'transcript' ? videoData.segments : []} />
+          <Transcript setCurrentTime={handleChangeTime} currentTime={currentTime} segments={tab === 'transcript' ? videoData.segments : videoData.summarySegments} />
           // TODO: chat
           : <div>TODO</div>
         }
