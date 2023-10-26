@@ -146,7 +146,7 @@ async function summarize(segments: LectureSegment[]) {
     }
     if(i !== 0) {
       const lastBlock = blocks[i - 1]
-      systemPrompt.content += ' For context, this was the previous block in the transcript: ' + lastBlock.slice(lastBlock.length - 100)
+      systemPrompt.content += ' For context, this was the previous block in the transcript: ' + lastBlock.slice(Math.max(0, lastBlock.length - 200))
     }
 
     const userPrompt: ChatCompletionMessageParam = {
