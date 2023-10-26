@@ -14,7 +14,7 @@ function Footer() {
     }
 
     return (
-        <footer className="bg-black">
+        <footer className="bg-black border-t border-text">
             <Container className="text-white relative pt-5 flex flex-col items-center">
                 {/* Horisontal Line */}
                 <Box className="w-full h-0.5 bg-gray-400 mb-5" /> 
@@ -29,21 +29,21 @@ function Footer() {
                         >
                             Lectures Talk © 2023
                         </Link>
-                        <Link href="#" underline="none" className="text-white text-sm no-underline hover:text-gray-300">
+                        <Link href="#" underline="none" className="text-text text-sm no-underline hover:text-gray-300">
                             Privacy Policy
                         </Link>
-                        <Link href="#" underline="none" className="text-white text-sm no-underline hover:text-gray-300">
+                        <Link href="#" underline="none" className="text-text text-sm no-underline hover:text-gray-300">
                             Terms and Conditions
                         </Link>
                     </Box>
                     <Box className="hidden md:flex space-x-3">
-                        <Link href="#" underline="none" className="text-white no-underline hover:text-gray-300">
+                        <Link href="#" underline="none" className="text-text no-underline hover:text-gray-300">
                             Upload lecture
                         </Link>
-                        <Link href="#" underline="none" className="text-white no-underline hover:text-gray-300">
+                        <Link href="#" underline="none" className="text-text no-underline hover:text-gray-300">
                             About
                         </Link>
-                        <Link href="#" underline="none" className="text-white no-underline hover:text-gray-300">
+                        <Link href="#" underline="none" className="text-text no-underline hover:text-gray-300">
                             FAQ
                         </Link>
                     </Box>

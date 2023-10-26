@@ -12,7 +12,7 @@ export default function Home() {
         <Box className="flex flex-col md:flex-row items-center w-10/12 md:w-1/2 space-x-4 space-y-3">
           <SubscriptionsIcon />
           <TextField className="flex-grow w-full md:w-auto" id="outlined-basic" label="Lecture URL" variant="outlined" />
-          <Button color='secondary' className='bg-primary h-14 w-full md:w-auto' variant="contained">Do AI magic</Button>
+          <Button color='primary' className='bg-primary h-14 w-full md:w-auto' variant="contained">Do AI magic</Button>
         </Box>
       </Box>
     </main>

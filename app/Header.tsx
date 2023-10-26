@@ -14,6 +14,7 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 
+// Examples of good icons
 import DonutSmallIcon from "@mui/icons-material/DonutSmall";
 import WorkspacesIcon from '@mui/icons-material/Workspaces';
 import WorkspacePremiumIcon from '@mui/icons-material/WorkspacePremium';
@@ -43,6 +44,10 @@ function Header() {
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
         null
     );
+
+    const handleLogInRedirect = () => {
+        router.push("/login");
+    };
 
     const handleLogIn = async () => {
         // await googleLogin();
@@ -186,7 +191,7 @@ function Header() {
                     <Box sx={{ flexGrow: 0 }}>
 
                         <Tooltip title="SignUp / LogIn">
-                            <IconButton onClick={handleLogIn} sx={{ p: 0 }}>
+                            <IconButton onClick={handleLogInRedirect} sx={{ p: 0 }}>
                                 <Box className="w-10 h-10">
                                     <PersonAddIcon />
                                 </Box>
