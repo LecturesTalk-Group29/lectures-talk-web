@@ -39,7 +39,7 @@ function LectureList({heading, lectures}: {heading: string, lectures: LectureDat
 
 function Lecture({lecture }: {lecture: LectureData}) {
     return (
-        <Link href={`/watch/${lecture._id}`} className={styles.lecture}>
+        <Link href={`/lectures/${lecture._id}`} className={styles.lecture}>
             <h3 className={styles.resetFont}>{lecture.title}</h3>
         </Link>
     )

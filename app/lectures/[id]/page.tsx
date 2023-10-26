@@ -59,13 +59,18 @@ export default function Page({ params }: { params: { id: string } }) {
     <main id={styles.main} className='page-width-no-padding'>
       <div id={styles.contentContainer}>
         <video ref={ref} src={videoData.url} id={styles.video} controls></video>
-        {tab === 'transcript' || tab === 'summary' ?
-          // TODO: summary segments
-          <Transcript setCurrentTime={handleChangeTime} currentTime={currentTime} segments={tab === 'transcript' ? videoData.segments : videoData.summarySegments} />
-          // TODO: chat
-          : <div>TODO</div>
+        {
+          tab === 'transcript' &&
+          <Transcript setCurrentTime={handleChangeTime} currentTime={currentTime} segments={videoData.segments} />
         }
-
+        {
+          tab === 'summary' &&
+          <Transcript setCurrentTime={handleChangeTime} currentTime={currentTime} segments={videoData.summarySegments} />
+        }
+        {
+          tab === 'chat' &&
+          <div>TODO</div>
+        }
       </div>
       <div id={styles.tabsContainer}>
         <div id={styles.tabs}>
