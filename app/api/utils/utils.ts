@@ -16,7 +16,6 @@ export async function createEmbedding(text: String) { //function to take in any 
         }
     });
     const [{ embedding }] = response.data?.data
-    console.log('embedding', embedding)
     return embedding
 }
 
@@ -63,11 +62,9 @@ export async function findSimilarDocuments(embedding: any) {
 export async function uploadDoc(docTextI: any) {
     const client = new MongoClient(`mongodb+srv://dbUser:${process.env.MONGO_DB_USER_PASSWORD}@cluster0.knhtl54.mongodb.net/?retryWrites=true&w=majority`);
     await client.connect();
-    console.log("connected")
     const db = client.db('lectures_talk'); // Replace with your database name.
     const collection = db.collection('trigger_test'); // Replace with your collection name.
     const embeddedData = await createEmbedding(docTextI)
-    console.log("created embedding")
     const doc = {
         title: "test doc",
         text: docTextI,
@@ -75,7 +72,6 @@ export async function uploadDoc(docTextI: any) {
     }
     const result = await collection.insertOne(doc)
     await client.close()
-    console.log("inserted")
 }
 
 export async function generateGPTResponse(query: any) {
