@@ -39,6 +39,14 @@ const config: Config = {
         '.scrollbar-hide::-webkit-scrollbar': {
           display: 'none', // For Webkit-based browsers (Chrome, Safari, and Opera)
         },
+        ".cut-corners": {
+          // clipPath: "polygon(25% 0, 100% 0, 75% 100%, 0% 100%)",
+          clipPath: "polygon(0 0, 83% 0, 100% 100%, 12% 100%, 0 62%)",
+        },
+        ".cut-corners-mobile": {
+          // clipPath: "polygon(25% 0, 100% 0, 75% 100%, 0% 100%)",
+          clipPath: "polygon(77% 0, 100% 0, 100% 100%, 45% 100%);",
+        },
       };
 
       addUtilities(newUtilities, ['responsive', 'hover']);

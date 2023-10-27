@@ -13,6 +13,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
+import { isAuthenticated } from './authUtils';
 
 // Examples of good icons
 import DonutSmallIcon from "@mui/icons-material/DonutSmall";
@@ -29,6 +30,7 @@ import KayakingIcon from '@mui/icons-material/Kayaking';
 import ArchitectureIcon from '@mui/icons-material/Architecture';
 
 
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -37,209 +39,218 @@ const pages = ["Lectures", "About"];
 const settings = ["Profile", "Logout"];
 
 function Header() {
-    const router = useRouter();
-    const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-        null
-    );
-    const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-        null
-    );
+  const router = useRouter();
+  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
+    null
+  );
+  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
+    null
+  );
 
-    const handleLogInRedirect = () => {
-        router.push("/login");
-    };
+  const [userAuth, setUserAuth] = React.useState(false);
 
-    const handleLogIn = async () => {
-        // await googleLogin();
-    };
+  React.useEffect(() => {
+      setUserAuth(isAuthenticated());
+  }, []);
 
-    const handleLogOut = async () => {
-        // await logout();
-    };
+  const handleAccountIconClick = () => {
+    if(userAuth){
+      alert("You are logged in, but cant redirect to user profile - dont have the user id");
+    } else {
+      router.push("/login");
+    }
+  };
 
-    const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElNav(event.currentTarget);
-    };
-    const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorElUser(event.currentTarget);
-    };
+  const handleLogIn = async () => {
+    // await googleLogin();
+  };
 
-    const handleCloseNavMenu = () => {
-        setAnchorElNav(null);
-    };
+  const handleLogOut = async () => {
+    // await logout();
+  };
 
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
-    };
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
 
-    return (
-        <AppBar
-            position="static"
-            // sx={{
-            //     backgroundColor: "black",
-            //     color: "white",
-            // }}
-        >
-            <Container maxWidth="lg">
-                <Toolbar disableGutters>
-                    <Link href={"/"}>
-                        <ArchitectureIcon
-                            sx={{
-                                display: { xs: "none", md: "flex" },
-                                mb: 0.3,
-                            }}
-                        />
-                    </Link>
-                    <Link href={"/"}>
-                        <Typography
-                            variant="h6"
-                            noWrap
-                            sx={{
-                                mr: 2,
-                                display: { xs: "none", md: "flex" },
-                                fontFamily: "sans-serif",
-                                fontWeight: 700,
-                                letterSpacing: ".1rem",
-                                color: "inherit",
-                                textDecoration: "none",
-                            }}
-                        >
-                            Lectures talk
-                        </Typography>
-                    </Link>
-                    {/* Menu for mobile */}
-                    <Box
-                        sx={{
-                            display: { xs: "flex", md: "none" },
-                        }}
-                    >
-                        <IconButton
-                            size="large"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleOpenNavMenu}
-                            color="inherit"
-                        >
-                            <MenuIcon />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorElNav}
-                            anchorOrigin={{
-                                vertical: "bottom",
-                                horizontal: "left",
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: "top",
-                                horizontal: "left",
-                            }}
-                            open={Boolean(anchorElNav)}
-                            onClose={handleCloseNavMenu}
-                            sx={{
-                                display: { xs: "block", md: "none" },
-                            }}
-                        >
-                            {pages.map((page) => (
-                                <MenuItem
-                                    key={page}
-                                    onClick={handleCloseNavMenu}
-                                >
-                                    <Typography textAlign="center">
-                                        {page}
-                                    </Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Box>
-                    <Box
-                        sx={{
-                            display: { xs: "flex", md: "none" },
-                            flexGrow: 2,
-                            justifyContent: "center",
-                        }}
-                    >
-                        <Link href={"/"}>
-                            <ArchitectureIcon />
-                        </Link>
-                    </Box>
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
 
-                    {/* Desktop pages */}
-                    <Box
-                        sx={{
-                            flexGrow: 1,
-                            display: { xs: "none", md: "flex" },
-                            justifyContent: "flex-end",
-                            mr: 2,
-                        }}
-                    >
-                        {pages.map((page) => (
-                            <Button
-                                key={page}
-                                onClick={handleCloseNavMenu}
-                                color="inherit"
-                                sx={{ my: 2, display: "block" }}
-                            >
-                                {page}
-                            </Button>
-                        ))}
-                    </Box>
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
 
-                    {/* Avatar with a menu */}
-                    {/* session is undefined, that's why this cind of check, its important */}
-                    <Box sx={{ flexGrow: 0 }}>
+  return (
+    <AppBar
+      position="static"
+    // sx={{
+    //     backgroundColor: "black",
+    //     color: "white",
+    // }}
+    >
+      <Container maxWidth="lg">
+        <Toolbar disableGutters>
+          <Link href={"/"}>
+            <ArchitectureIcon
+              sx={{
+                display: { xs: "none", md: "flex" },
+                mb: 0.3,
+              }}
+            />
+          </Link>
+          <Link href={"/"}>
+            <Typography
+              variant="h6"
+              noWrap
+              sx={{
+                mr: 2,
+                display: { xs: "none", md: "flex" },
+                fontFamily: "sans-serif",
+                fontWeight: 700,
+                letterSpacing: ".1rem",
+                color: "inherit",
+                textDecoration: "none",
+              }}
+            >
+              Lectures talk
+            </Typography>
+          </Link>
+          {/* Menu for mobile */}
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
+            }}
+          >
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: "bottom",
+                horizontal: "left",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "left",
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{
+                display: { xs: "block", md: "none" },
+              }}
+            >
+              {pages.map((page) => (
+                <MenuItem
+                  key={page}
+                  onClick={handleCloseNavMenu}
+                >
+                  <Typography textAlign="center">
+                    {page}
+                  </Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
+              flexGrow: 2,
+              justifyContent: "center",
+            }}
+          >
+            <Link href={"/"}>
+              <ArchitectureIcon />
+            </Link>
+          </Box>
 
-                        <Tooltip title="SignUp / LogIn">
-                            <IconButton onClick={handleLogInRedirect} sx={{ p: 0 }}>
-                                <Box className="w-10 h-10">
-                                    <PersonAddIcon />
-                                </Box>
-                            </IconButton>
-                        </Tooltip>
+          {/* Desktop pages */}
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: { xs: "none", md: "flex" },
+              justifyContent: "flex-end",
+              mr: 2,
+            }}
+          >
+            {pages.map((page) => (
+              <Button
+                key={page}
+                onClick={handleCloseNavMenu}
+                color="inherit"
+                sx={{ my: 2, display: "block" }}
+              >
+                {page}
+              </Button>
+            ))}
+          </Box>
 
-                        {/* Profile Options when logged in*/}
-                        {/* session is undefined, that's why this cind of check, its important */}
-                        <Menu
-                            sx={{ mt: "45px" }}
-                            id="menu-appbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            {settings.map((setting) => (
-                                <MenuItem
-                                    key={setting}
-                                    onClick={() => {
-                                        // In arrow function you need to invoke the func right away "()"
-                                        if (setting === "Profile") {
-                                            router.push("/profile");
-                                        }
-                                        if (setting === "Logout") {
-                                            handleLogOut();
-                                        }
-                                        handleCloseUserMenu();
-                                    }}
-                                >
-                                    <Typography textAlign="center">
-                                        {setting}
-                                    </Typography>
-                                </MenuItem>
-                            ))}
-                        </Menu>
-                    </Box>
-                </Toolbar>
-            </Container>
-        </AppBar>
-    );
+          {/* Avatar with a menu */}
+          {/* session is undefined, that's why this cind of check, its important */}
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title={userAuth ? "Your Account" : "SignUp / LogIn"}>
+              <IconButton onClick={handleAccountIconClick} sx={{ p: 0 }}>
+                <Box className="w-10 h-10">
+                  {userAuth ? (<ManageAccountsIcon />) : (<PersonAddIcon />)}
+                </Box>
+              </IconButton>
+            </Tooltip>
+
+            {/* Profile Options when logged in*/}
+            {/* session is undefined, that's why this cind of check, its important */}
+            <Menu
+              sx={{ mt: "45px" }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map((setting) => (
+                <MenuItem
+                  key={setting}
+                  onClick={() => {
+                    // In arrow function you need to invoke the func right away "()"
+                    if (setting === "Profile") {
+                      router.push("/profile");
+                    }
+                    if (setting === "Logout") {
+                      handleLogOut();
+                    }
+                    handleCloseUserMenu();
+                  }}
+                >
+                  <Typography textAlign="center">
+                    {setting}
+                  </Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
 }
 export default Header;
