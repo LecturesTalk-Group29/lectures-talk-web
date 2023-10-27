@@ -19,7 +19,7 @@ import { HumanBubble, AiBubble } from "./ChatBubbles";
 // TODO: Add mockup language UI support
 export default function Chat() {
 
-	const CURRENT_ENDPOINT: string = "/chatTestEcho";
+	const CURRENT_ENDPOINT: string = "/api/chat";
 	// const CURRENT_ENDPOINT: string = "/queryGPT";
 
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -66,8 +66,7 @@ export default function Chat() {
 				console.log("query: " + inputRef.current.value);
 				const request: ServerRequest = { query: inputRef.current.value };
 				inputRef.current.value = '';
-				const response = await axios.post<ServerResponse>(process.env.NEXT_PUBLIC_API_URL + CURRENT_ENDPOINT, request);
-
+				const response = await axios.post<ServerResponse>(CURRENT_ENDPOINT, request);
 				// Remove the loading message and add AI response to the messages array
 				setMessages(prevMessages => {
 					// Filter out the loading message
