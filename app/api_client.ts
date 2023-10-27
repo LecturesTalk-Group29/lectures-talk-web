@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 import { isTokenExpired, refreshAccessToken, tokenPublisher } from "./auth"
 
-const secureEndpoints = ['create']
+const secureEndpoints = ['/lectures']
 
 export default async function apiClient(endpoint: string, method: string, body: string): Promise<any> {
     const request = new Request(`/api/${endpoint}`, {
