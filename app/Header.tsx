@@ -13,7 +13,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { isAuthenticated } from './authUtils';
 
 // Examples of good icons
 import DonutSmallIcon from "@mui/icons-material/DonutSmall";
@@ -34,6 +33,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { User, userPublisher }  from "./user";
 
 const pages = ["Lectures", "About"];
 const settings = ["Profile", "Logout"];
@@ -47,15 +47,15 @@ function Header() {
     null
   );
 
-  const [userAuth, setUserAuth] = React.useState(false);
+  const [userAuth, setUserAuth] = React.useState<User | null>(null);
 
-  React.useEffect(() => {
-      setUserAuth(isAuthenticated());
-  }, []);
+  userPublisher.subscribe((value) => {
+    setUserAuth(value);
+  })
 
   const handleAccountIconClick = () => {
     if(userAuth){
-      alert("You are logged in, but cant redirect to user profile - dont have the user id");
+      router.push(`/users/${userAuth.username}`);
     } else {
       router.push("/login");
     }

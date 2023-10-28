@@ -8,7 +8,7 @@ export interface User {
     email: string
 }
 
-const userPublisher = new Publisher<User | null>(null)
+export const userPublisher = new Publisher<User | null>(null)
 
 tokenPublisher.subscribe((token) => {
     if(token === null) {
@@ -17,3 +17,9 @@ tokenPublisher.subscribe((token) => {
     }
     userPublisher.set(JSON.parse(atob(token.split('.')[1])) as User)
 })
+
+
+//userPublisher.subscribe((user) => console.log(user))
+//userPubliser.value => 
+
+//nul -> not sighned in user/null

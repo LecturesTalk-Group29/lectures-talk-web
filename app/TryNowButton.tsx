@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
-import { isAuthenticated } from './authUtils';
+// import { isAuthenticated } from './authUtils';
 import { useRouter } from 'next/navigation'
+import { User, userPublisher }  from "./user";
 
 
 // I feels that logic of this button is flawed and can be significantly improved
@@ -23,11 +24,11 @@ export default function TryNowButton({
     const router = useRouter();
     // const { session, googleLogin } = useSession();
     // const [text, setText] = useState<string>("Try Now");
-    const [userAuth, setUserAuth] = useState(false);
+    const [userAuth, setUserAuth] = useState<User | null>(null);
 
-    useEffect(() => {
-        setUserAuth(isAuthenticated());
-    }, []);
+    userPublisher.subscribe((value) => {
+        setUserAuth(value);
+    })
 
     // useEffect(() => {
     //     if (overrideText) {
@@ -45,7 +46,7 @@ export default function TryNowButton({
     // GitHub Copilot yells at me: Yo, the endpoint you probably wanted to use is /lectures/new
     // not /lectures :P
     const handleClick = async () => {
-        if(userAuth){
+        if (userAuth) {
             await router.push('/lectures');
         } else {
             await router.push('/login');
