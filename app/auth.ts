@@ -48,11 +48,12 @@ export async function refreshAccessToken() {
         console.warn('refreshing token failed')
         return
     }
-    const { token, newRefreshToken } = await response.json()
-    setTokens(token, newRefreshToken)
+    const tokens = await response.json()
+    setTokens(tokens.token, tokens.refreshToken)
 }
 
 export function isTokenExpired(token: string): boolean {
+    console.log(token)
     const expiry = JSON.parse(atob(token.split('.')[1])).exp
     if (expiry - 30 <= Math.floor(Date.now() / 1000)) {
         return true
