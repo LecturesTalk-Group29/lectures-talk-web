@@ -5,6 +5,7 @@ import Box from "@mui/material/Box";
 import { TextField, Button, Typography,CircularProgress } from '@mui/material';
 import Footer from "./../Footer";
 import { useRouter } from 'next/navigation'
+import { login } from '../auth';
 
 const MIN_PASSWORD_LENGTH = 4;
 
@@ -43,39 +44,43 @@ export default function Login() {
 
   const handleLoginRequest = async () => {
     setIsLoading(true);
-    try {
-      const response = await fetch(`${window.location.origin}/api/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-        }),
-      });
 
-      if (response.ok) {
-        const data = await response.json();
-        // Save the token and refreshToken in a secure place (e.g., cookies, local storage, state management, etc.)
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('refreshToken', data.refreshToken);
+    await login(email, password);
+    router.push('/');
+    setIsLoading(false);
+    // try {
+    //   const response = await fetch(`${window.location.origin}/api/login`, {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       email: email,
+    //       password: password,
+    //     }),
+    //   });
 
-        // Redirect to home page (later it should be a dashboard or something)
-        router.push('/');
-      } else if (response.status === 400) {
-        alert('Credentials are missing.');
-      } else if (response.status === 401) {
-        alert('Invalid credentials.');
-      } else if (response.status === 500) {
-        alert('Server error. Please try again later.');
-      }
-    } catch (error) {
-      console.error('Error logging in:', error);
-      alert('An error occurred. Please try again later.');
-    }finally {
-      setIsLoading(false);
-    }
+    //   if (response.ok) {
+    //     const data = await response.json();
+    //     // Save the token and refreshToken in a secure place (e.g., cookies, local storage, state management, etc.)
+    //     localStorage.setItem('token', data.token);
+    //     localStorage.setItem('refreshToken', data.refreshToken);
+
+    //     // Redirect to home page (later it should be a dashboard or something)
+    //     router.push('/');
+    //   } else if (response.status === 400) {
+    //     alert('Credentials are missing.');
+    //   } else if (response.status === 401) {
+    //     alert('Invalid credentials.');
+    //   } else if (response.status === 500) {
+    //     alert('Server error. Please try again later.');
+    //   }
+    // } catch (error) {
+    //   console.error('Error logging in:', error);
+    //   alert('An error occurred. Please try again later.');
+    // }finally {
+    //   setIsLoading(false);
+    // }
   }
 
 

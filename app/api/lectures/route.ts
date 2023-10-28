@@ -96,10 +96,11 @@ async function start(video: LectureData) {
 
   fs.unlink(videoPath, function() {console.log('file deleted')})
 
-  fs.writeFileSync('test.mp3', Buffer.concat(chunks))
+  // fs.writeFileSync('test.mp3', Buffer.concat(chunks))
 
   const api_transcription = await openai.audio.transcriptions.create({
-    file: await toFile(Buffer.concat(chunks), 'unknown.mp3'),
+    // file: await toFile(Buffer.concat(chunks), 'unknown.mp3'),
+    file: await toFile(fs.readFileSync("test.mp3"), 'unknown.mp3'),
     model: 'whisper-1',
     response_format: 'verbose_json'
   })  as any
