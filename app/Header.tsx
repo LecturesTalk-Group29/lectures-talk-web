@@ -33,7 +33,7 @@ import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { User, userPublisher }  from "./user";
+import { User, userPublisher } from "./user";
 
 const pages = ["Lectures", "About"];
 const settings = ["Profile", "Logout"];
@@ -49,12 +49,14 @@ function Header() {
 
   const [userAuth, setUserAuth] = React.useState<User | null>(null);
 
-  userPublisher.subscribe((value) => {
-    setUserAuth(value);
-  })
+  React.useEffect(() => {
+    userPublisher.subscribe((value) => {
+      setUserAuth(value);
+    })
+  }, []);
 
   const handleAccountIconClick = () => {
-    if(userAuth){
+    if (userAuth) {
       router.push(`/users/${userAuth.username}`);
     } else {
       router.push("/login");

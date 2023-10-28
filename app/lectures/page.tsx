@@ -5,6 +5,7 @@ import { Box, Typography, TextField, Button, Dialog, DialogActions, DialogConten
 import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
 import { useRouter } from "next/navigation";
 import Footer from "./../Footer";  // Adjust the import path accordingly
+import apiClient from '../api_client';
 
 export default function PostLecture() {
   const router = useRouter();
@@ -15,13 +16,14 @@ export default function PostLecture() {
   const [errorText, setErrorText] = useState("");
 
   const URLFormatCheck = (url: string) => {
-    const pattern = new RegExp('^(http(s)?:\\/\\/)?' + // protocol (http or https)
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-    return !!pattern.test(url);
+    // const pattern = new RegExp('^(http(s)?:\\/\\/)?' + // protocol (http or https)
+    //   '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+    //   '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+    //   '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+    //   '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+    //   '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    // return !!pattern.test(url);
+    return true;
   };
 
   const isValidURL = () => {
@@ -39,7 +41,7 @@ export default function PostLecture() {
   };
 
   const handleClick = () => {
-    if(isValidURL()){
+    if (isValidURL()) {
       setOpen(true);
     }
   };
@@ -48,11 +50,16 @@ export default function PostLecture() {
     setOpen(false);
   };
 
-  const handleModalSubmit = () => {
+  const handleModalSubmit = async () => {
     // TODO: do something with Title and Prof name
-    const lectureBtoa = btoa(lectureUrl);
+    // const lectureBtoa = btoa(lectureUrl);
     // TODO: Push to the user lectures page, where he will wait fro the lecture processing or something
-    router.push(`/lectures/${lectureBtoa}`);
+
+    const idResponce = await apiClient("/lectures", "POST", JSON.stringify({ url: lectureUrl, title: title, professor: professor }));
+    console.log(idResponce)
+    const id = await idResponce.json();
+    console.log(id)
+    router.push(`/lectures/${id}`);
     setOpen(false);
   };
 

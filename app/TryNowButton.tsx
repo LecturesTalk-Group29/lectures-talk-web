@@ -26,9 +26,11 @@ export default function TryNowButton({
     // const [text, setText] = useState<string>("Try Now");
     const [userAuth, setUserAuth] = useState<User | null>(null);
 
-    userPublisher.subscribe((value) => {
-        setUserAuth(value);
-    })
+    useEffect(() => {
+        userPublisher.subscribe((value) => {
+          setUserAuth(value);
+        })
+    }, []);
 
     // useEffect(() => {
     //     if (overrideText) {
