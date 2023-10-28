@@ -1,6 +1,4 @@
-'use client'
-
-import { redirect } from "next/navigation"
+import { error } from "console"
 import apiClient from "./api_client"
 import { Publisher } from "./publisher"
 
@@ -11,61 +9,52 @@ if(typeof window !== 'undefined') {
 }
 
 export async function register(username: string, email: string, password: string) {
-    try {
-        const response = await fetch('/api/register', {
-            method: 'POST',
-            body: JSON.stringify({ username, email, password })
-        })
-        if (response.status !== 201) {
-            throw new Error((await response.json()).message)
-        }
-    } catch (_) {
-        redirect('/error')
+    const response = await fetch('/api/register', {
+        method: 'POST',
+        body: JSON.stringify({ username, email, password })
+    })
+    if (response.status !== 201) {
+        throw new Error((await response.json()).message)
     }
 }
 
 export async function login(email: string, password: string) {
-    try {
-        const response = await fetch('/api/login', {
-            method: 'POST',
-            body: JSON.stringify({ email, password })
-        })
-        if (response.status !== 200) {
-            throw new InvalidCredentials()
-        }
-        const { token, refreshToken } = await response.json()
-        setTokens(token, refreshToken)
-    } catch (_) {
-        redirect('/error')
+    const response = await fetch('/api/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+    })
+    if (response.status !== 200) {
+        throw new InvalidCredentials()
     }
+    const { token, refreshToken } = await response.json()
+    setTokens(token, refreshToken)
 }
 
 export async function refreshAccessToken() {
     const refreshToken = localStorage.getItem('refreshToken')
     if (!refreshToken) {
-        redirect('/login')
+        console.warn('refreshToken missing')
+        return
     }
     if (isTokenExpired(refreshToken)) {
-        redirect('/login')
+        console.warn('refreshToken expired')
+        return
     }
-    try {
-        const response = await fetch('/refresh', {
-            method: 'POST',
-            body: JSON.stringify({ refreshToken })
-        })
-        if(response.status !== 200) {
-            redirect('/legin')
-        }
-        const { token, newRefreshToken } = await response.json()
-        setTokens(token, newRefreshToken)
-    } catch (_) {
-        redirect('/login')
+    const response = await fetch('/api/refresh', {
+        method: 'POST',
+        body: JSON.stringify({ refreshToken })
+    })
+    if(response.status !== 200) {
+        console.warn('refreshing token failed')
+        return
     }
+    const { token, newRefreshToken } = await response.json()
+    setTokens(token, newRefreshToken)
 }
 
 export function isTokenExpired(token: string): boolean {
     const expiry = JSON.parse(atob(token.split('.')[1])).exp
-    if (expiry - 30 >= Date.now()) {
+    if (expiry - 30 <= Math.floor(Date.now() / 1000)) {
         return true
     }
     return false

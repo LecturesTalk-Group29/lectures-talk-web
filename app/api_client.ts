@@ -1,10 +1,9 @@
-import { redirect } from "next/navigation"
 import { isTokenExpired, refreshAccessToken, tokenPublisher } from "./auth"
 
 const secureEndpoints = ['/lectures']
 
 export default async function apiClient(endpoint: string, method: string, body: string): Promise<any> {
-    const request = new Request(`/api/${endpoint}`, {
+    const request = new Request(`/api${endpoint}`, {
         method,
         body,
         headers: {
@@ -13,10 +12,7 @@ export default async function apiClient(endpoint: string, method: string, body: 
     })
     if(secureEndpoints.includes(endpoint)) {
         const token = tokenPublisher.value
-        if(!token) {
-            redirect('/login')
-        }
-        if(isTokenExpired(token)) {
+        if(token && isTokenExpired(token)) {
             await refreshAccessToken()
         }
         request.headers.append('Authorization', `Bearer ${tokenPublisher.value}`)
