@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
-import User from '../user';
+import User from './user';
 
 export function authenticate(request: Request) : User | null {
     const authHeader = request.headers.get('Authorization')
