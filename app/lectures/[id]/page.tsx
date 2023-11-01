@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction, useState, useEffect, useRef } from 'react'
 
 import { useSearchParams } from 'next/navigation'
 import { LectureData, LectureSegment } from '../../lecture'
+import { useRouter } from 'next/navigation'
 
 export default function Page({ params }: { params: { id: string } }) {
   const tabs = ['transcript', 'summary', 'chat']
@@ -13,10 +14,16 @@ export default function Page({ params }: { params: { id: string } }) {
   const [currentTime, setCurrentTime] = useState(0)
   const [videoData, setVideoData] = useState<LectureData | null>(null)
   const ref = useRef(null)
+  const router = useRouter()
 
   useEffect(() => {
     async function fetchLecture() {
-      const data = await (await fetch(`/api/lectures/${id}`)).json();
+      const data = await (await fetch(`/api/lectures/${id}`)).json() as LectureData;
+      if(!data || data.status !== 'complete') {
+        console.log(data)
+        router.push(`/users/${data.submitter}`)
+        return
+      }
       setVideoData(data);
     }
     fetchLecture();
