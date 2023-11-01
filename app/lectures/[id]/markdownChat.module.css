@@ -1,0 +1,19 @@
+
+
+
+/* For the <pre> tags */
+.markdown pre {
+    background-color: rgb(32, 32, 32);
+    padding: 0.2rem;
+    border-radius: 0.5rem;
+}
+
+/* For the <code> tags within <pre> */
+.markdown pre code {
+    margin: 0.2rem;
+    color: rgb(0, 184, 0);
+}
+
+/* .python .language-python {
+
+} */

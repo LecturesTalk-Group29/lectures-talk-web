@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction, useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { LectureData, LectureSegment } from '../../lecture'
 import { useRouter } from 'next/navigation'
+import Chat from './Chat'
 
 export default function Page({ params }: { params: { id: string } }) {
   const tabs = ['transcript', 'summary', 'chat']
@@ -76,7 +77,9 @@ export default function Page({ params }: { params: { id: string } }) {
         }
         {
           tab === 'chat' &&
-          <div>TODO</div>
+          <div>
+            <Chat/>
+          </div>
         }
       </div>
       <div id={styles.tabsContainer}>
