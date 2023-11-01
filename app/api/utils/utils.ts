@@ -58,21 +58,41 @@ export async function findSimilarDocuments(embedding: any) {
         await client.close();
     }
 }
-
-export async function uploadDoc(docTextI: any) {
+export async function uploadDoc(doc: any) {
     const client = new MongoClient(`mongodb+srv://dbUser:${process.env.MONGO_DB_USER_PASSWORD}@cluster0.knhtl54.mongodb.net/?retryWrites=true&w=majority`);
-    await client.connect();
-    const db = client.db('lectures_talk'); // Replace with your database name.
-    const collection = db.collection('trigger_test'); // Replace with your collection name.
-    const embeddedData = await createEmbedding(docTextI)
-    const doc = {
-        title: "test doc",
-        text: docTextI,
-        embedding: [{ embeddedData }]
+    try {
+        await client.connect();
+        const db = client.db('lectures_talk'); // Replace with your database name.
+        const collection = db.collection('trigger_test'); // Replace with your collection name.
+        const embeddedData = [];
+  
+        // Iterate through the document segments
+        for (const segment of doc.segments) {
+            const embeddedSegment = await embedSegmentText(segment);
+            embeddedData.push(embeddedSegment);
+        }
+  
+        const newDoc = {
+            _id: doc._id,
+            url: doc.url,
+            submitter: doc.submitter,
+            status: doc.status,
+            title: doc.title,
+            language: doc.language,
+            duration: doc.duration,
+            segments: embeddedData,
+        };
+  
+        const result = await collection.insertOne(newDoc);
+    } finally {
+        await client.close();
     }
-    const result = await collection.insertOne(doc)
-    await client.close()
-}
+  }
+  
+  async function embedSegmentText(segment: any) {
+    const embeddedText = await createEmbedding(segment.text); // Embed the "text" field of the segment
+    return { ...segment, embedding: embeddedText };
+  }
 
 export async function generateGPTResponse(query: any) {
     const gptPrompt = (query);
