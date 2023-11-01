@@ -89,13 +89,13 @@ export default function Chat() {
 	return (
 		<main>
 			<Container className='flex justify-center'>
-				<div className='w-2/5 bg-secondary my-5 p-3 rounded-2xl'>
+				<div className='w-full bg-secondary my-5 p-3 rounded-2xl'>
 					<h1 className='m-2 w-full text-center text-lg'>Chat</h1>
 
 					{/* Chat body */}
 					<div>
 
-						<div className='overflow-y-auto scrollbar-hide w-full bg-background h-7/10-screen p-1' ref={chatboxRef}>
+						<div className='overflow-y-auto scrollbar-hide w-full bg-background h-6/10-screen p-1' ref={chatboxRef}>
 							{messages.map((message, index) => {
 								if (message.type === 'human') {
 									const htmlText = converter.makeHtml(message.text);
