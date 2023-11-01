@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import ffmpeg from 'fluent-ffmpeg';
 import { finished } from 'stream/promises';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/index.mjs';
+import { uploadDoc } from '../utils/utils';
 
 const videoColl = dbClient.db('lectures_talk').collection('videos')
 
@@ -132,6 +133,8 @@ async function start(video: LectureData) {
   video.status = 'complete'
   
   console.log('lecture created, time; ' + Date.now())
+
+  uploadDoc(video)
 
   const result = await videoColl.replaceOne({_id: video._id}, video);
 }
