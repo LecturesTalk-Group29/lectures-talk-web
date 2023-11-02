@@ -28,15 +28,16 @@ export async function POST(request: Request) {
     }
 }
 */
-let similarDocumentsText: string | Document | null = null;
+
 
 export async function POST(request: Request) {
     if (request.method !== 'POST') {
         return NextResponse.json({ message: 'Not POST' }, { status: 401 });
     }
-
+    let similarDocumentsText: string | Document | null = null;
     const requestBody = await request.json();
     const query = requestBody.query;
+    //const docID = '6542dcff2c230c5bf200510a';
     // check if similarDocumentsText is null 
     //this way it doesnt redo the vector search with every query
     if (!similarDocumentsText) {
@@ -45,7 +46,7 @@ export async function POST(request: Request) {
         similarDocumentsText = await findSimilarDocuments(messageEmbeddings);
     }
 
-    const gptPrompt = "Based on " + similarDocumentsText + " and your knowledge, " + query;
+    const gptPrompt = "Based on " + similarDocumentsText + " and your knowledge, " + query + ". Answer like you are a professor helping a new student. If there is no context given then just pretend as if there was.";
 
     if (!query) {
         return NextResponse.json({ message: 'Message is required in the request body' }, { status: 400 });

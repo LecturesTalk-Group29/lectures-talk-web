@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { MongoClient } from 'mongodb';
+import { MongoClient, ObjectId } from 'mongodb';
 
 export async function createEmbedding(text: String) { //function to take in any text and sends it to the openai embedding ada 002 model to return embeddings
     const url = 'https://api.openai.com/v1/embeddings';
@@ -23,41 +23,131 @@ export async function createEmbedding(text: String) { //function to take in any 
 export async function findSimilarDocuments(embedding: any) {
     const client = new MongoClient(`mongodb+srv://dbUser:${process.env.MONGO_DB_USER_PASSWORD}@cluster0.knhtl54.mongodb.net/?retryWrites=true&w=majority`)
     try {
+        console.log("Trying to search collection")
         await client.connect();
 
         const db = client.db('lectures_talk');
         const collection = db.collection('trigger_test');
+        console.log("Connected")
 
         // Query for similar documents.
-        const documents = await collection.aggregate([
+        const similarSegments = await collection.aggregate([
             {
-                $search: {
-                    knnBeta: {
-                        vector: embedding,
-                        //this is the path to the embedding field in mongo document upload
-                        //https://www.mongodb.com/docs/atlas/atlas-search/field-types/knn-vector/
-                        path: 'embeddedData ',
-                        k: 5,
-                    },
+              $search: {
+                knnBeta: {
+                  vector: embedding,
+                  path: 'embedding', 
+                  k: 5, // Change the value of 'k' to the number of similar segments you want to find
                 },
+              },
             },
             {
-                $project: {
-                    description: 1, // i dont know if i can change this, but it was set to 1 in the tutorial docs
-                    score: { $meta: 'searchscore' }
-                },
+              $project: {
+                text: 1, // Return the 'text' field of the segment
+                score: { $meta: 'searchScore' },
+              },
             },
-        ]).toArray()
+          ]).toArray();
+        console.log("Searched")
 
-        return documents[0] // will fix later, just a lazy way to get highest metascore for the time being
-
-    } catch {
-        const returnNoDoc = "No Context given"
-        return returnNoDoc
+        if (similarSegments.length > 0) {
+          const highestScoreDoc = similarSegments.reduce((highest, current) => {
+            return highest.score > current.score ? highest : current
+          })
+          console.log(highestScoreDoc);
+          return highestScoreDoc.text;
+        } else {
+          //const returnNoDoc = fetchVideoSummaryText(docID);
+          const returnNoDoc = ""
+          console.log(returnNoDoc);
+          return returnNoDoc;
+        }
+    } catch (error) {
+        console.error("Error occurred:", error);
+        return "Error occurred";
     } finally {
         await client.close();
     }
 }
+
+async function fetchVideoSummaryText(documentId: string) {
+    const client = new MongoClient(
+      `mongodb+srv://dbUser:${process.env.MONGO_DB_USER_PASSWORD}@cluster0.knhtl54.mongodb.net/?retryWrites=true&w=majority`
+    );
+  
+    try {
+      await client.connect();
+      const db = client.db('lectures_talk');
+      const collection = db.collection('videos');
+      const objectId = new ObjectId(documentId)
+  
+      const videoDocument = await collection.findOne({ _id: objectId });
+  
+      if (!videoDocument) {
+        return "Document not found";
+      }
+  
+      const summarySegments = videoDocument.summarySegments || [];
+      const summaryText = summarySegments.map((segment: { text: any; }) => segment.text).join(' ');
+  
+      return summaryText;
+    } catch (error) {
+      console.error("Error occurred:", error);
+      return "Error occurred";
+    } finally {
+      await client.close();
+    }
+  }
+/*
+export async function findSimilarDocuments(embedding: any) {
+    const client = new MongoClient(`mongodb+srv://dbUser:${process.env.MONGO_DB_USER_PASSWORD}@cluster0.knhtl54.mongodb.net/?retryWrites=true&w=majority`)
+    try {
+        console.log("Trying to search collection")
+        await client.connect();
+
+        const db = client.db('lectures_talk');
+        const collection = db.collection('trigger_test');
+        console.log("Connected")
+
+        // Query for similar documents.
+        const similarSegments = await collection.aggregate([
+            {
+              $search: {
+                knnBeta: {
+                  vector: embedding,
+                  path: 'embedding', // Assuming your segments have an 'embedding' field
+                  k: 5, // Change the value of 'k' to the number of similar segments you want to find
+                },
+              },
+            },
+            {
+              $project: {
+                text: 1, // Return the 'text' field of the segment
+                score: { $meta: 'searchScore' },
+              },
+            },
+          ]).toArray();
+        console.log("Searched")
+
+        if (similarSegments.length > 0) {
+          const highestScoreDoc = similarSegments.reduce((highest, current) => {
+            return highest.score > current.score ? highest : current
+          })
+          console.log(highestScoreDoc);
+          return highestScoreDoc.text;
+        } else {
+          const returnNoDoc = "No similar document found";
+          console.log(returnNoDoc);
+          return returnNoDoc;
+        }
+    } catch (error) {
+        console.error("Error occurred:", error);
+        return "Error occurred";
+    } finally {
+        await client.close();
+    }
+}
+*/
 export async function uploadDoc(doc: any) {
     const client = new MongoClient(`mongodb+srv://dbUser:${process.env.MONGO_DB_USER_PASSWORD}@cluster0.knhtl54.mongodb.net/?retryWrites=true&w=majority`);
     try {
