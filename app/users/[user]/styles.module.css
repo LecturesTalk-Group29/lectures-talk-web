@@ -5,5 +5,47 @@
 
 .lecture {
     display: block;
-    margin: 1rem 0rem;
+    margin: 2rem 0rem;
+}
+
+.lectureHeading {
+    margin: 0;
+}
+
+.thumbnail {
+    border-radius: 4px;
+    width: 100%;
+    height: auto;
+}
+
+.profileSvgText {
+    font-size:32px;
+    font-weight:700;
+    fill:#fff;
+    font-family:roboto,sans-serif;
+    background-color:#000
+}
+
+.profileSvg {
+    height: 8rem;
+    width: auto;
+    border-radius: 50%;
+}
+
+.profile {
+    display: flex;
+    grid-gap: 2rem;
+    align-items: center;
+    margin: 2rem;
+}
+
+@media screen and (min-width: 64rem) {
+    .lecture {
+        display: flex;
+        grid-gap: 1rem;
+    }
+
+    .thumbnail {
+        max-width: 320px;
+    }
 }

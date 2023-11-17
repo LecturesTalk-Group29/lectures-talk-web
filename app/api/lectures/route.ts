@@ -9,6 +9,7 @@ import ffmpeg from 'fluent-ffmpeg';
 import { finished } from 'stream/promises';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/index.mjs';
 import { uploadDoc } from '../utils/utils';
+import { spawnSync } from 'child_process';
 
 const videoColl = dbClient.db('lectures_talk').collection('videos')
 
@@ -18,7 +19,7 @@ export async function GET(request: Request) {
   for(const param of searchParams.entries()) {
     query[param[0]] = param[1]
   }
-  console.log(query)
+  
   const lectures = videoColl.find(query);  
 
   return NextResponse.json(await lectures.toArray());
@@ -53,7 +54,8 @@ export async function POST(request: Request) {
     url: video.url,
     submitter: user.username,
     status: 'pending',
-    title: video.title
+    title: video.title,
+    lecturer: video.lecturer
   } as unknown as LectureData
 
   doc._id = (await videoColl.insertOne(doc as any)).insertedId
@@ -95,6 +97,16 @@ async function start(video: LectureData) {
   await waitForEnd(command);
   console.log('conversion complete')
 
+  const process = spawnSync('ffmpeg', [
+    '-i', videoPath,
+    '-ss', '00:00:01.00',
+    '-frames:v', '1',
+    '-update', '1',
+    '-vf', 'scale=320:320:force_original_aspect_ratio=decrease',
+    '-f', 'image2pipe', '-vcodec', 'mjpeg',
+    '-'
+  ])
+
   fs.unlink(videoPath, function() {console.log('file deleted')})
 
   // fs.writeFileSync('test.mp3', Buffer.concat(chunks))
@@ -109,7 +121,7 @@ async function start(video: LectureData) {
 
   fs.writeFileSync('ph_test_api_transcript.txt', JSON.stringify(api_transcription))
 
-  // const api_transcription = JSON.parse(fs.readFileSync('./api_transcript.json', 'utf-8'));
+  // const api_transcription = JSON.parse(fs.readFileSync('./ph_test_api_transcript.txt', 'utf-8'));
 
   const segments: LectureSegment[] = [];
 
@@ -131,6 +143,7 @@ async function start(video: LectureData) {
   video.segments = segments
   video.summarySegments = summarySegements
   video.status = 'complete'
+  video.thumbnail = process.status === 0 ? process.stdout : undefined
   
   console.log('lecture created, time; ' + Date.now())
 
@@ -188,10 +201,7 @@ async function summarize(segments: LectureSegment[]) {
 
   return summarySegements
 }
-// https://ia801801.us.archive.org/32/items/twitter-1055445425405263875/1055445425405263875.mp4
-// aHR0cHM6Ly9pYTgwMTgwMS51cy5hcmNoaXZlLm9yZy8zMi9pdGVtcy90d2l0dGVyLTEwNTU0NDU0MjU0MDUyNjM4NzUvMTA1NTQ0NTQyNTQwNTI2Mzg3NS5tcDQ=
-
-// http://hydro.ijs.si/v01b/c9/zfxdikmedp5hoksg7zv7ok6pgmikavnz.mp4
-// aHR0cDovL2h5ZHJvLmlqcy5zaS92MDFiL2M5L3pmeGRpa21lZHA1aG9rc2c3enY3b2s2cGdtaWthdm56Lm1wNA==
-
-// ffmpeg -vn -sn -dn -i test_vid.mp4 -c:a aac -ar 22050 -b:a 32k -ac 1 test_3.m4a
+/*
+https://ia801801.us.archive.org/32/items/twitter-1055445425405263875/1055445425405263875.mp4
+http://hydro.ijs.si/v01b/c9/zfxdikmedp5hoksg7zv7ok6pgmikavnz.mp4
+*/

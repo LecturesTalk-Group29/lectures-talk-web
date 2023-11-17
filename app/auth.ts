@@ -30,15 +30,15 @@ export async function login(email: string, password: string) {
     setTokens(token, refreshToken)
 }
 
-export async function refreshAccessToken() {
+export async function refreshAccessToken() : Promise<boolean> {
     const refreshToken = localStorage.getItem('refreshToken')
     if (!refreshToken) {
         console.warn('refreshToken missing')
-        return
+        return false
     }
     if (isTokenExpired(refreshToken)) {
         console.warn('refreshToken expired')
-        return
+        return false
     }
     const response = await fetch('/api/refresh', {
         method: 'POST',
@@ -46,10 +46,11 @@ export async function refreshAccessToken() {
     })
     if(response.status !== 200) {
         console.warn('refreshing token failed')
-        return
+        return false
     }
     const tokens = await response.json()
     setTokens(tokens.token, tokens.refreshToken)
+    return true
 }
 
 export function isTokenExpired(token: string): boolean {

@@ -13,7 +13,9 @@ export default async function apiClient(endpoint: string, method: string, body: 
     if(secureEndpoints.includes(endpoint)) {
         const token = tokenPublisher.value
         if(token && isTokenExpired(token)) {
-            await refreshAccessToken()
+            if(!await refreshAccessToken()) {
+                throw 'Unauthorized'
+            }
         }
         request.headers.append('Authorization', `Bearer ${tokenPublisher.value}`)
     }

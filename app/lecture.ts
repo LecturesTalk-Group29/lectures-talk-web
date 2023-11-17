@@ -17,5 +17,7 @@ export interface LectureData {
     summarySegments: LectureSegment[]
     title: string
     submitter: string
-    status: string
+    status: string,
+    thumbnail?: Buffer,
+    lecturer: string
 }

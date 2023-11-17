@@ -21,7 +21,13 @@ export default function User({ params }: { params: { user: string } }) {
 
     return (
         <main className='page-width'>
-            <h1 className={styles.resetFont}>{params.user}</h1>
+            <div className={styles.profile}>
+                <svg className={styles.profileSvg} viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="100%" height="100%"></rect>
+                    <text className={styles.profileSvgText} x="50%" y="50%" dominantBaseline="central" textAnchor="middle">{params.user[0]}</text>
+                </svg>
+                <h1 className={styles.resetFont}>{params.user}</h1>
+            </div>
             {pendingLectures.length !== 0 && <LectureList heading={'Pending'} lectures={pendingLectures} />}
             {completeLectures.length !== 0 && <LectureList heading={'All'} lectures={completeLectures} />}
         </main>
@@ -40,7 +46,12 @@ function LectureList({heading, lectures}: {heading: string, lectures: LectureDat
 function Lecture({lecture }: {lecture: LectureData}) {
     return (
         <Link href={`/lectures/${lecture._id}`} className={styles.lecture}>
-            <h3 className={styles.resetFont}>{lecture.title}</h3>
+            <img className={styles.thumbnail}
+                src={lecture.thumbnail ? `data:image/png;base64,${lecture.thumbnail.toString('base64')}` : '/thumbnail_missing.svg'} />
+            <div>
+                <h3 className={`${styles.resetFont} ${styles.lectureHeading}`}>{lecture.title}</h3>
+                <div>{lecture.lecturer ?? 'Unknown'}</div>
+            </div>
         </Link>
     )
 }

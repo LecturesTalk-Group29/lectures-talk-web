@@ -55,7 +55,16 @@ export default function PostLecture() {
     // const lectureBtoa = btoa(lectureUrl);
     // TODO: Push to the user lectures page, where he will wait fro the lecture processing or something
 
-    const idResponce = await apiClient("/lectures", "POST", JSON.stringify({ url: lectureUrl, title: title, professor: professor }));
+    let idResponce
+    try {
+      idResponce = await apiClient("/lectures", "POST", JSON.stringify({ url: lectureUrl, title: title, lecturer: professor }));
+    } catch(e) {
+      if(e !== 'Unauthorized') {
+        throw e
+      }
+      router.push('/login')
+      return
+    }
     console.log(idResponce)
     const id = await idResponce.json();
     console.log(id)
