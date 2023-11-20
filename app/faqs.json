@@ -1,0 +1,26 @@
+[
+    {
+        "question": "What is the primary function of this app?",
+        "answer": "Our app serves as a personalized search engine for academic lectures, enabling students to efficiently navigate and understand lengthy video lectures."
+    },
+    {
+        "question": "How does the Lecture Summarization feature work?",
+        "answer": "By inputting a video link into our app, users receive a detailed transcript and a concise summary of the lecture, capturing the core content without needing to watch the entire video."
+    },
+    {
+        "question": "Can I find specific parts of a lecture easily using this app?",
+        "answer": "Yes, our app includes clickable timestamps linked to each summarized point, allowing you to directly access specific moments or concepts in the lecture."
+    },
+    {
+        "question": "How does the Interactive Chat function enhance my learning?",
+        "answer": "The Interactive Chat acts like a virtual tutor, pulling information from the uploaded lecture to answer your queries, much like a professor would during office hours, but more accessible and instant."
+    },
+    {
+        "question": "Is this app suitable for all types of video lectures?",
+        "answer": "Yes, our app is designed to work with a wide range of video lectures, making it a versatile tool for students in various academic fields."
+    },
+    {
+        "question": "What makes this app different from other lecture tools?",
+        "answer": "Our app not only summarizes lectures but also integrates interactive features like context-aware chat and clickable timestamps, providing a comprehensive and active learning experience."
+    }
+]

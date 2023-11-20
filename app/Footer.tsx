@@ -29,14 +29,21 @@ function Footer() {
                         >
                             Lectures Talk © 2023
                         </Link>
-                        <Link href="#" underline="none" className="text-text text-sm no-underline hover:text-gray-300">
+                        <Link href="/privacy" underline="none" className="text-text text-sm no-underline hover:text-gray-300">
                             Privacy Policy
                         </Link>
-                        <Link href="#" underline="none" className="text-text text-sm no-underline hover:text-gray-300">
+                        <Link href="/terms" underline="none" className="text-text text-sm no-underline hover:text-gray-300">
                             Terms and Conditions
                         </Link>
                     </Box>
+
                     <Box className="hidden md:flex space-x-3">
+                        <Typography className="text-text no-underline hover:text-gray-300">
+                            Made by Group 29 for INFO39014 Capstone Project
+                        </Typography>
+                    </Box>
+
+                    {/* <Box className="hidden md:flex space-x-3">
                         <Link href="#" underline="none" className="text-text no-underline hover:text-gray-300">
                             Upload lecture
                         </Link>
@@ -46,7 +53,7 @@ function Footer() {
                         <Link href="#" underline="none" className="text-text no-underline hover:text-gray-300">
                             FAQ
                         </Link>
-                    </Box>
+                    </Box> */}
                 </Box>
             </Container>
         </footer>
