@@ -1,6 +1,7 @@
 .resetFont {
     font-size: revert;
     margin: revert;
+    font-weight: revert;
 }
 
 .lecture {
@@ -9,7 +10,7 @@
 }
 
 .lectureHeading {
-    margin: 0;
+    margin: 0.4rem 0;
 }
 
 .thumbnail {
@@ -38,8 +39,10 @@
     align-items: center;
     margin: 2rem;
 }
-
-@media screen and (min-width: 64rem) {
+.listHeading, .lectureInfo {
+    padding: 0 1rem;
+}
+@media screen and (min-width: 48rem) {
     .lecture {
         display: flex;
         grid-gap: 1rem;
@@ -47,5 +50,11 @@
 
     .thumbnail {
         max-width: 320px;
+    }
+    #main {
+        padding: 0 1rem;
+    }
+    .listHeading, .lectureInfo {
+        padding: 0;
     }
 }

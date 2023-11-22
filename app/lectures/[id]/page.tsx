@@ -60,13 +60,20 @@ export default function Page({ params }: { params: { id: string } }) {
   }
 
   if (videoData == null) {
-    return <main>Loading...</main>;
+    return<main><div id={styles.loading}>Loading...</div></main>;
   }
 
   return (
     <main id={styles.main} className='page-width-no-padding'>
       <div id={styles.contentContainer}>
-        <video ref={ref} src={videoData.url} id={styles.video} controls></video>
+        <div id={styles.player}>
+          <video ref={ref} src={videoData.url} id={styles.video} controls></video>
+          <div id={styles.videoInfo}>
+            <h1 className={styles.resetFont} id={styles.title}>{videoData.title}</h1>
+            <div>Lecturer: {videoData.lecturer ?? 'Unknown'}</div>
+            <div>Poster: {videoData.submitter}</div>
+          </div>
+        </div>
         {
           tab === 'transcript' &&
           <Transcript setCurrentTime={handleChangeTime} currentTime={currentTime} segments={videoData.segments} />

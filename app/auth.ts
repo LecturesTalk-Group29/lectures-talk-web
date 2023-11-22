@@ -30,6 +30,10 @@ export async function login(email: string, password: string) {
     setTokens(token, refreshToken)
 }
 
+export async function logout(email: string, password: string) {
+    deleteTokens()
+}
+
 export async function refreshAccessToken() : Promise<boolean> {
     const refreshToken = localStorage.getItem('refreshToken')
     if (!refreshToken) {
@@ -66,6 +70,12 @@ function setTokens(token: string, refreshToken: string) {
     localStorage.setItem('token', token)
     localStorage.setItem('refreshToken', refreshToken)
     tokenPublisher.set(token)
+}
+
+function deleteTokens() {
+    localStorage.removeItem('token')
+    localStorage.removeItem('refreshToken')
+    tokenPublisher.set(null)
 }
 
 export class InvalidCredentials extends Error {

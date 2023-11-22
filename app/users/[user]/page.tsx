@@ -20,10 +20,10 @@ export default function User({ params }: { params: { user: string } }) {
     const completeLectures = lectures.filter(lecture => lecture.status === 'complete')
 
     return (
-        <main className='page-width'>
+        <main id={styles.main} className='page-width-no-padding'>
             <div className={styles.profile}>
                 <svg className={styles.profileSvg} viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="100%" height="100%"></rect>
+                    <rect width="100%" height="100%" fill="#8a1c8d"></rect>
                     <text className={styles.profileSvgText} x="50%" y="50%" dominantBaseline="central" textAnchor="middle">{params.user[0]}</text>
                 </svg>
                 <h1 className={styles.resetFont}>{params.user}</h1>
@@ -37,7 +37,7 @@ export default function User({ params }: { params: { user: string } }) {
 function LectureList({heading, lectures}: {heading: string, lectures: LectureData[]}) {
     return (
         <>
-            <h2 className={styles.resetFont}>{heading}</h2>
+            <h2 className={`${styles.resetFont} ${styles.listHeading}`}>{heading}</h2>
             { lectures.map((lecture, index) => <Lecture lecture={lecture} key={index} />)}
         </>
     )
@@ -48,9 +48,10 @@ function Lecture({lecture }: {lecture: LectureData}) {
         <Link href={`/lectures/${lecture._id}`} className={styles.lecture}>
             <img className={styles.thumbnail}
                 src={lecture.thumbnail ? `data:image/png;base64,${lecture.thumbnail.toString('base64')}` : '/thumbnail_missing.svg'} />
-            <div>
+            <div className={styles.lectureInfo}>
                 <h3 className={`${styles.resetFont} ${styles.lectureHeading}`}>{lecture.title}</h3>
-                <div>{lecture.lecturer ?? 'Unknown'}</div>
+                <div>Lecturer: {lecture.lecturer ?? 'Unknown'}</div>
+                <div>Poster: {lecture.submitter}</div>
             </div>
         </Link>
     )
