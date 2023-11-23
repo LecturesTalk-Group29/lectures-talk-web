@@ -4,15 +4,15 @@ type MessageType =
 	| { type: 'human', text: string }
 	| { type: 'ai', text: string }
 	| { type: 'loading' };
-type ServerRequest = {query: string};
-type ServerResponse = {content: string};
+type ServerRequest = { query: string };
+type ServerResponse = { content: string };
 
 import Box from "@mui/material/Box";
 import { TextField, Button } from '@mui/material';
 import Container from '@mui/material/Container';
 import SendIcon from '@mui/icons-material/Send';
 import { useState, useEffect, useRef, KeyboardEvent } from 'react';
-import axios from 'axios'; 
+import axios from 'axios';
 import showdown from 'showdown';
 import { HumanBubble, AiBubble } from "./ChatBubbles";
 
@@ -34,6 +34,29 @@ export default function Chat() {
 		{ type: 'ai', text: "Hello, ask me any question about the lecture" },
 	]);
 
+	// { type: 'ai', text: "Hello, ask me any question about the lecture" },
+	// { type: 'ai', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+	// { type: 'ai', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+	// { type: 'ai', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+	// { type: 'ai', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+	// { type: 'ai', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+	// { type: 'ai', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+	// { type: 'ai', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+	// { type: 'ai', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+	// { type: 'ai', text: "Hello, ask me any question about the lecture" },
+	// { type: 'human', text: "Hello, ask me any question about the lecture" },
+
 	//Handles scrolling to the bottom of the chatbox when messages are added
 	useEffect(() => {
 		if (chatboxRef.current) {
@@ -41,12 +64,12 @@ export default function Chat() {
 			element.scrollTop = element.scrollHeight;
 		}
 	}, [messages]);
-	
+
 	const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            handleSubmit();
-        }
-    }
+		if (event.key === 'Enter') {
+			handleSubmit();
+		}
+	}
 
 	const handleSubmit = async (e?: React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLInputElement>) => {
 		if (e) {
@@ -55,12 +78,12 @@ export default function Chat() {
 		if (inputRef.current) {
 			//this pattern is used to remove TS18047 warning
 			const inputValue = inputRef.current.value;
-    		if (inputValue === '') return;
-			
+			if (inputValue === '') return;
+
 			// Add user and AI message to the messages array
 			setMessages(prevMessages => [...prevMessages, { type: 'human', text: inputValue }]);
 			setMessages(prevMessages => [...prevMessages, { type: 'loading' }]);
-			
+
 			try {
 				// Send message to the server
 				console.log("query: " + inputRef.current.value);
@@ -75,7 +98,7 @@ export default function Chat() {
 					updatedMessages.push({ type: 'ai', text: response.data.content });
 					return updatedMessages;
 				});
-			
+
 			} catch (error) {
 				console.error('Error:', error);
 				// Optionally remove the loading message if an error occurs
@@ -87,15 +110,15 @@ export default function Chat() {
 
 
 	return (
-		<main>
-			<Container className='flex justify-center'>
-				<div className='w-full bg-secondary my-5 p-3 rounded-2xl'>
-					<h1 className='m-2 w-full text-center text-lg'>Chat</h1>
+		<div className="h-full w-full ">
+			<Container className='flex justify-center w-full h-full'>
+				<div className='w-full bg-background border border-customGray my-5 p-3 rounded-2xl flex flex-col'>
+					<h1 className='hidden md:block m-2 w-full text-center text-lg'>Chat</h1>
 
 					{/* Chat body */}
-					<div>
+					<div className="flex-grow max-w-full h-[60%]">
 
-						<div className='overflow-y-auto scrollbar-hide w-full bg-background h-6/10-screen p-1' ref={chatboxRef}>
+						<div className='overflow-y-auto scrollbar-hide w-full h-full bg-background border border-customGray p-1' ref={chatboxRef}>
 							{messages.map((message, index) => {
 								if (message.type === 'human') {
 									const htmlText = converter.makeHtml(message.text);
@@ -109,20 +132,20 @@ export default function Chat() {
 							})}
 						</div>
 
-						{/* Chat input */}
-						<div>
-							<Box
-							>
-								<Box className="flex justify-between w-full pt-3">
-									<TextField className='w-10/12' onKeyDown={handleKeyDown} id="outlined-basic" color="secondary" label="Ask question" variant="outlined" inputRef={inputRef} />
-									<Button onClick={handleSubmit} className='mx-2' color="secondary" variant="outlined"><SendIcon /></Button>
-								</Box>
+					</div>
+					{/* Chat input */}
+					<div>
+						<Box
+						>
+							<Box className="flex justify-between w-full pt-3">
+								<TextField className='w-10/12' onKeyDown={handleKeyDown} id="outlined-basic" color="secondary" label="Ask question" variant="outlined" inputRef={inputRef} />
+								<Button onClick={handleSubmit} className='mx-2' color="secondary" variant="outlined"><SendIcon /></Button>
 							</Box>
-						</div>
+						</Box>
 					</div>
 				</div>
 			</Container>
-		</main>
+		</div>
 	)
 }
 

@@ -118,7 +118,7 @@ function Header() {
                 textDecoration: "none",
               }}
             >
-              Lectures talk
+              LecturesTalk
             </Typography>
           </Link>
           {/* Menu for mobile */}

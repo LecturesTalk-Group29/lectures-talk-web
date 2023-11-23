@@ -6,6 +6,9 @@ import { Dispatch, SetStateAction, useState, useEffect, useRef } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { LectureData, LectureSegment } from '../../lecture'
 import { useRouter } from 'next/navigation'
+
+// Adding some juicy material UI code in you prestine CSS lake
+import CircularProgress from '@mui/material/CircularProgress';
 import Chat from './Chat'
 
 export default function Page({ params }: { params: { id: string } }) {
@@ -20,7 +23,7 @@ export default function Page({ params }: { params: { id: string } }) {
   useEffect(() => {
     async function fetchLecture() {
       const data = await (await fetch(`/api/lectures/${id}`)).json() as LectureData;
-      if(!data || data.status !== 'complete') {
+      if (!data || data.status !== 'complete') {
         console.log(data)
         router.push(`/users/${data.submitter}`)
         return
@@ -60,7 +63,7 @@ export default function Page({ params }: { params: { id: string } }) {
   }
 
   if (videoData == null) {
-    return<main><div id={styles.loading}>Loading...</div></main>;
+    return <main><div id={styles.loading}><CircularProgress color="secondary" /></div></main>;
   }
 
   return (
@@ -84,9 +87,7 @@ export default function Page({ params }: { params: { id: string } }) {
         }
         {
           tab === 'chat' &&
-          <div>
-            <Chat/>
-          </div>
+          <Chat />
         }
       </div>
       <div id={styles.tabsContainer}>
@@ -132,7 +133,7 @@ function Transcript({ segments, currentTime, setCurrentTime }: { setCurrentTime:
     setCurrentSegement(segment)
     if (!isManualScrolling.current) {
       isAutoScrolling.current = true
-      segment.scrollIntoView({block: "center"})
+      segment.scrollIntoView({ block: "center" })
     }
   }
 
@@ -156,7 +157,7 @@ function Transcript({ segments, currentTime, setCurrentTime }: { setCurrentTime:
       {
         manualScroll &&
         // <div id={styles.manualScrollContainer}>
-         <button id={styles.manualScroll} onClick={disableManualScroll}>Synchronize Scroll</button>
+        <button id={styles.manualScroll} onClick={disableManualScroll}>Synchronize Scroll</button>
         // </div>
       }
     </div>

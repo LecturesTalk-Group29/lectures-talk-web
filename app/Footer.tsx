@@ -39,7 +39,7 @@ function Footer() {
 
                     <Box className="hidden md:flex space-x-3">
                         <Typography className="text-text no-underline hover:text-gray-300">
-                            Made by Group 29 for INFO39014 Capstone Project
+                            Made by <span className="text-accent">Group 29</span> for INFO39014 Capstone Project
                         </Typography>
                     </Box>
 
